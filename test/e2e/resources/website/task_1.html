@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task One</title>
+</head>
+<body>
+<h1 id="task" class="taskTitle">Example task 1</h1>
+<button id="solve-task-btn">Solve task</button>
+<button disabled="true" id="submit" class="is-disabled">Submit</button>
+<script>
+    let solveTaskButton = document.getElementById("solve-task-btn");
+    let submitButton = document.getElementById("submit");
+
+    solveTaskButton.addEventListener("click", function () {
+        submitButton.disabled = false;
+        submitButton.classList.remove("is-disabled")
+
+    })
+
+    submitButton.addEventListener("click", () => {
+        submitButton.disabled = true;
+        submitButton.classList.add("is-disabled");
+    });
+
+
+</script>
+</body>
+</html>

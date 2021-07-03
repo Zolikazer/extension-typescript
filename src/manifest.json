@@ -1,0 +1,38 @@
+{
+  "name": "Arrowex Timer Extension",
+  "version": "3",
+  "key": "Z2VjaQ==",
+  "description": "The most awesome rater extension!",
+  "permissions": [
+    "storage",
+    "tabs",
+    "alarms",
+    "notifications"
+  ],
+  "content_scripts": [
+    {
+      "js": [
+        "content/main.js"
+      ],
+      "matches": [
+        "file:///*/tests/resources/website/*",
+        "https://rating.ewoq.google.com/*"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "page": "background/background.html",
+    "persistent": false
+  },
+  "browser_action": {
+    "default_popup": "view/popup/popup.html",
+    "default_icon": {
+      "16": "images/arrow_16.png",
+      "32": "images/arrow_32.png",
+      "48": "images/arrow_48.png",
+      "128": "images/arrow_128.png"
+    }
+  },
+  "manifest_version": 2
+}
