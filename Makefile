@@ -20,5 +20,7 @@ build: clean
 	cp -r src/* build/
 	find ./build -name "*.ts" -type f -delete
 	rsync -a dist/ build
+	rollup build/background/install.js --file build/background/install.bundle.js --format iife --validate
+	rollup build/background/background.js --file build/background/background.bundle.js --format iife --validate
 	mkdir extension
 	cd build/; 	zip -r ../extension/extension.zip .

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Arrow Extension</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<style type="text/css">
+    body {
+        width: 180px;
+    }
+</style>
+<div class="text-center">
+    <div>
+        <div>
+            <b>Welcome Dear Evaluator!</b>
+            <img id="detach-icon" src="../../images/detach.png" title="Click to detach extension"
+                 alt="Click to detach extension">
+        </div>
+        <p id="counting-status">Not counting</p>
+        <hr>
+    </div>
+
+    <div>
+        <b>Worked time:</b>
+        <p id="worked-time">00:00</p>
+        <hr>
+    </div>
+
+    <div>
+        <b>Money earned</b>
+        <p id="money-earned">Configure in settings!</p>
+        <hr>
+    </div>
+
+    <div>
+        <b>Tasks solved:</b>
+        <p id="task-count">0</p>
+        <hr>
+    </div>
+
+    <div>
+        <b>Average time spent on a task:</b>
+        <p id="rph">0</p>
+        <hr>
+    </div>
+
+    <div id="current-task">
+        <p class="font-bold">No Task Solved</p>
+        <hr>
+    </div>
+
+    <div class="mt-10">
+        <button class="btn" id="reset-btn">Reset</button>
+    </div>
+</div>
+
+<br>
+<div class="mb-10 text-center">
+    | <a href="../tasks/tasks.html" id="tasks-link">Tasks</a> | <a href="../settings/settings.html" id="settings-link">Settings</a> | <a href="../worksheet/worksheet.html" id="worksheet">Worksheet</a>
+    |
+</div>
+<div id="detached-help" class="text-center">
+</div>
+<script type="module" src="popup.js"></script>
+
+</body>
+</html>

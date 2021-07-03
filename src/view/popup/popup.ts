@@ -1,0 +1,6 @@
+const DETACHED_POPUP_WINDOW_HEIGHT = 510;
+const DETACHED_POPUP_WINDOW_WIDTH = 200;
+
+export class Popup {
+
+}
