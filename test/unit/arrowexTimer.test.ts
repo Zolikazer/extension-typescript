@@ -1,8 +1,7 @@
 import {ArrowexTimer} from "../../src/model/arrowexTimer";
 import {ChromeStorage} from "../../src/storage/chromeStorage";
-import {mock, when} from "ts-mockito";
 
-const testData: { [index: string]: any } = {
+const testData = {
     "taskCount": 0,
     "startTime": 0,
     "stopTime": 0,
@@ -24,16 +23,39 @@ const testData: { [index: string]: any } = {
 }
 
 
+jest.mock("../../src/storage/chromeStorage", () => {
+    return {
+        ChromeStorage: jest.fn().mockImplementation(() => {
+            return {
+                get: (keys: null): Promise<any> => {
+                    return new Promise<Object>((resolve, reject) => {
+                        resolve(testData);
+                    });
+                },
+            };
+        })
+    };
+});
+
 describe('ArrowexTimer', function () {
-    const storage:ChromeStorage = mock(ChromeStorage);
+    const storage = new ChromeStorage();
     const arrowexTimer = new ArrowexTimer(storage);
 
     beforeEach(() => {
-        when(storage.get(null)).thenReturn(testData);
 
     })
 
-    it('should initialize when called init', function () {
-        arrowexTimer.ini
+    it('should initialize when called init', async function () {
+        jest.spyOn(arrowexTimer, "notify");
+
+        await arrowexTimer.init();
+        expect(arrowexTimer.taskCount).toBe(testData.taskCount);
+        expect(arrowexTimer.lastSubmit).toBe(testData.lastSubmit);
+        expect(arrowexTimer.startTime).toBe(testData.startTime);
+        expect(arrowexTimer.stopTime).toBe(testData.stopTime);
+        expect(arrowexTimer.worksheet).toBe(testData.worksheet);
+        expect(arrowexTimer.currentTaskName).toBe(testData.currentTaskName)
+
+        expect(arrowexTimer.notify).toBeCalledWith("initialized")
     });
 });

@@ -1,5 +1,5 @@
 export class ChromeStorage {
-    get = async (keys: string[] | string | null): Promise<Object> => {
+    get = async (keys: string[] | string | null): Promise<{ [index: string]: any }> => {
         // @ts-ignore
         return new Promise<Object>((resolve, reject) => {
             try {
