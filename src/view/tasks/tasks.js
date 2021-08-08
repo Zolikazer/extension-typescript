@@ -2,7 +2,7 @@
 // All rights reserved.
 // Email: okoskacsaka@gmail.com
 
-import {renderTask} from "../../utils.js";
+import {renderTask} from "../../datetime.js";
 
 render();
 

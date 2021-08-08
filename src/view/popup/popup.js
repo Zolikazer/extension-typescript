@@ -3,7 +3,7 @@
 // Email: okoskacsaka@gmail.com
 // noinspection JSIgnoredPromiseFromCall
 
-import {calculateRph, getWorkedTimeString, renderTask} from "../../utils.js";
+import {calculateRph, getWorkedTimeString, renderTask} from "../../datetime.js";
 import {ArrowexTimer} from "../../model/ArrowexTimer";
 
 const DETACHED_POPUP_WINDOW_HEIGHT = 510;

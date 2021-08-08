@@ -4,3 +4,4 @@ dist
 test/e2e/venv
 extension
 build
+test/e2e/__pycache__/

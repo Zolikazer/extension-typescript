@@ -19,8 +19,9 @@ build: clean
 	mkdir -p build
 	cp -r src/* build/
 	find ./build -name "*.ts" -type f -delete
-	rsync -a dist/ build
-	rollup build/background/install.js --file build/background/install.bundle.js --format iife --validate
-	rollup build/background/background.js --file build/background/background.bundle.js --format iife --validate
+	rsync -a dist/src/ build
+	npx rollup build/background/install.js --file build/background/install.bundle.js --validate
+	npx rollup build/background/background.js --file build/background/background.bundle.js --validate
+	npx rollup build/view/popup/popup.js --file build/view/popup/popup.bundle.js --validate
 	mkdir extension
 	cd build/; 	zip -r ../extension/extension.zip .

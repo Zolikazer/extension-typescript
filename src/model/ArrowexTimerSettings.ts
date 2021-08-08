@@ -1,3 +1,75 @@
+import {ChromeStorage} from "../chrome/ChromeStorage";
+
 export class ArrowexTimerSettings {
+    private _warnIfForgotToStart: boolean;
+    private _moneyEarned: { [index: string]: any };
+    private _submitTimeEnabled: boolean;
+    private _submitTime: number;
+    private _instructionTimeEnabled: boolean;
+    private _instructionTime: number;
+    private _autoSubmitTimes: { [index: string]: any };
+    private storage: ChromeStorage;
+
+    constructor(storage: ChromeStorage) {
+        this.storage = storage;
+    }
+
+    updateStateWith(settings: { [index: string]: any }): void {
+        this._warnIfForgotToStart = settings.warnIfForgotToStart;
+        this._moneyEarned = settings.moneyEarned;
+        this._submitTimeEnabled = settings.submitTimeEnabled;
+        this._submitTime = settings.submitTime;
+        this._instructionTimeEnabled = settings.instructionTimeEnabled;
+        this._instructionTime = settings.instructionTime;
+        this._autoSubmitTimes = settings.autoSubmitTimes
+    }
+
+    async saveState(): Promise<void> {
+        const settings = {
+            warnIfForgotToStart: this.warnIfForgotToStart,
+            moneyEarned: {
+                payrate: this.moneyEarned.payrate,
+                currency: this.moneyEarned.currency,
+                conversionRate: this.moneyEarned.conversionRate
+            },
+            submitTimeEnabled: this.submitTimeEnabled,
+            submitTime: this.submitTime,
+            instructionTimeEnabled: this.instructionTimeEnabled,
+            instructionTime: this.instructionTime,
+            autoSubmitTimes: this._autoSubmitTimes
+        }
+
+        await this.storage.set(settings);
+
+    }
+
+    get instructionTime(): number {
+        return this._instructionTime;
+    }
+
+    get warnIfForgotToStart(): boolean {
+        return this._warnIfForgotToStart;
+    }
+
+    get moneyEarned(): { [index: string]: any } {
+        return this._moneyEarned;
+    }
+
+    get submitTimeEnabled(): boolean {
+        return this._submitTimeEnabled;
+    }
+
+    get submitTime(): number {
+        return this._submitTime;
+    }
+
+    get instructionTimeEnabled(): boolean {
+        return this._instructionTimeEnabled;
+    }
+
+    get autoSubmitTimes(): { [p: string]: any } {
+        return this._autoSubmitTimes;
+    }
+
 
 }
