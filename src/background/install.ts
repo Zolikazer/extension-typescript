@@ -22,6 +22,7 @@ chrome.runtime.onInstalled.addListener((details) => {
             },
             "worksheet": {}
         })
+        console.log("installed")
         // @ts-ignore
         chrome.tabs.create({url: `chrome-extension://${chrome.runtime.id}/view/install/install.html`});
     }

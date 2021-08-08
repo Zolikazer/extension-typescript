@@ -2,11 +2,12 @@ export class ChromeAPI {
     sendMessage(message: { [index: string]: any }): void {
         // @ts-ignore
         chrome.runtime.sendMessage(message);
+        console.log("msg sent")
     }
 
-    onMessage(callback: (ev: Event) => void) {
+    onMessage(callback: (ev: any) => void) {
         // @ts-ignore
-        chrome.runtime.onMessage.addListener(callback)
+        chrome.runtime.onMessage.addListener(callback);
     }
 
     getCurrentWindow(callback: (window: any) => void) {
@@ -27,6 +28,22 @@ export class ChromeAPI {
             width: width,
             height: height,
 
+        });
+    }
+
+    queryTabs(queryInfo: any, callback: (tabs: any[]) => void) {
+        // @ts-ignore
+        chrome.tabs.query({}, callback);
+
+    }
+
+    createNotification(id: string, title: string, message: string, type: string, iconUrl: string) {
+        // @ts-ignore
+        chrome.notifications.create(id, {
+            title: title,
+            message: message,
+            type: type,
+            iconUrl: iconUrl
         });
 
     }

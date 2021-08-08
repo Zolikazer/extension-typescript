@@ -16,6 +16,7 @@ export class Orchestrator {
     private chromeApi: ChromeAPI;
     private lastBeep: number;
     private datetimeManager: DatetimeManager;
+    private warnInterval: NodeJS.Timer;
 
     constructor(domInspector: DomInspector, instructionTimer: InstructionTimer, arrowexTimer: ArrowexTimer,
                 datetimeManager: DatetimeManager, chromeApi: ChromeAPI) {
@@ -25,7 +26,9 @@ export class Orchestrator {
         this.arrowexTimer = arrowexTimer;
         this.datetimeManager = datetimeManager;
         this.lastBeep = this.datetimeManager.getCurrentTimeInPst();
+        this.warnInterval = null;
         this.chromeApi.sendMessage({msg: EWOQ_OPENED});
+
     }
 
     async run() {
@@ -42,6 +45,7 @@ export class Orchestrator {
     private async orchestrate() {
         if (!this.isRatingPage()) {
             console.log("not rating pae");
+            clearInterval(this.warnInterval);
             return;
         }
 
@@ -51,14 +55,16 @@ export class Orchestrator {
             case INSTRUCTION_PAGE:
                 await this.arrowexTimer.stopTimer();
                 this.instructionTimer.addTimerToInstruction();
+                clearInterval(this.warnInterval);
                 break;
             case RATING_PAGE:
                 if (!this.arrowexTimer.isCounting) {
                     await this.arrowexTimer.startTimer();
-                    this.warnToSubmit();
+                    this.warnInterval = setInterval(() => this.warnToSubmit(), ONE_SECOND_IN_MILLISECONDS);
                 }
                 break;
             case OTHER_PAGE:
+                clearInterval(this.warnInterval);
                 await this.arrowexTimer.stopTimer();
         }
     }
@@ -82,16 +88,13 @@ export class Orchestrator {
     }
 
     private warnToSubmit() {
-        let submitWarnTimeout = setTimeout(() => this.warnToSubmit, ONE_SECOND_IN_MILLISECONDS);
+        console.log("warn to sumit");
 
         const currentTime = this.datetimeManager.getCurrentTimeInPst();
+        console.log("should i warn", this.shouldWarnToSubmit(currentTime))
         if (this.shouldWarnToSubmit(currentTime)) {
             this.chromeApi.sendMessage({msg: BEEP});
             this.lastBeep = currentTime;
-        }
-
-        if (!this.arrowexTimer.isCounting) {
-            clearTimeout(submitWarnTimeout);
         }
 
     }

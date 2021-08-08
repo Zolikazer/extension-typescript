@@ -15,6 +15,7 @@ export class ArrowexTimerSettings {
     }
 
     updateStateWith(settings: { [index: string]: any }): void {
+        console.log(settings)
         this._warnIfForgotToStart = settings.warnIfForgotToStart;
         this._moneyEarned = settings.moneyEarned;
         this._submitTimeEnabled = settings.submitTimeEnabled;
