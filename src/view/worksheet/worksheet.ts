@@ -1,18 +1,24 @@
-import {calculateRph, getWorkedTimeString} from "../../datetime.js";
-import {getCurrentTimeInPst, getYYYYMMString} from "../../common/datetime_utils";
+import {ArrowexTimer} from "../../model/ArrowexTimer";
+import {DatetimeManager} from "../../datetime/datetimeManager";
+import {calculateRph, getWorkedTimeString} from "../../common/utils";
+import {ChromeStorage} from "../../chrome/ChromeStorage";
 
-export class Worksheet {
-    constructor(arrowexTimer) {
+class Worksheet {
+    private readonly arrowexTimer: ArrowexTimer;
+    private readonly datetimeManager: DatetimeManager;
+
+    constructor(arrowexTimer: ArrowexTimer, datetimeManager: DatetimeManager) {
         this.arrowexTimer = arrowexTimer;
+        this.datetimeManager = datetimeManager;
     }
 
-    render = () => {
+    render() {
         this.renderYesterdayStat();
         this.renderThisMonthStat();
     }
 
 
-    renderYesterdayStat = () => {
+    renderYesterdayStat() {
         const yesterdayStatContainer = document.getElementById("last-day-stat");
         const lastWorkedDayStat = this.arrowexTimer.getLastDayFromWorksheet();
 
@@ -21,9 +27,9 @@ export class Worksheet {
 
     }
 
-    renderThisMonthStat = () => {
-        const currentDateInPst = new Date(getCurrentTimeInPst());
-        const currentYearAndMonth = getYYYYMMString(currentDateInPst);
+    renderThisMonthStat() {
+        const currentDateInPst = new Date(this.datetimeManager.getCurrentTimeInPst());
+        const currentYearAndMonth = this.datetimeManager.getYYYYMMString(currentDateInPst);
 
         const [taskCount, workedSeconds] = this.collectMonthTaskCountAndWorkedSeconds(this.arrowexTimer.worksheet, currentYearAndMonth);
 
@@ -32,7 +38,7 @@ export class Worksheet {
 
     }
 
-    collectMonthTaskCountAndWorkedSeconds = (worksheet, YYYYMMString) => {
+    collectMonthTaskCountAndWorkedSeconds(worksheet: { [index: string]: any }, YYYYMMString: string) {
         let totalTaskCount = 0;
         let totalWorkedSecond = 0;
 
@@ -48,7 +54,7 @@ export class Worksheet {
 
     }
 
-    getRenderedStat = (date, taskCount, workedSeconds) => {
+    getRenderedStat(date: string, taskCount: number, workedSeconds: number) {
         const rph = calculateRph(workedSeconds, taskCount);
         const workedTime = getWorkedTimeString(workedSeconds);
 
@@ -60,3 +66,16 @@ export class Worksheet {
 
 
 }
+
+async function main() {
+    const chromeStorage = new ChromeStorage();
+    const datetimeManager = new DatetimeManager();
+    const arrowexTimer = new ArrowexTimer(chromeStorage, datetimeManager);
+    const worksheet = new Worksheet(arrowexTimer, datetimeManager);
+
+    await arrowexTimer.init();
+
+    worksheet.render();
+}
+
+main()

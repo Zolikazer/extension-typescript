@@ -34,4 +34,12 @@ export class DatetimeManager {
         return `${yyyy}-${mm}-${dd}`;
 
     }
+
+    getYYYYMMString(date: Date): string {
+        const yyyy = date.getFullYear();
+        let mm: number | string = date.getMonth() + 1;
+        mm = mm > 10 ? mm : "0" + mm;
+
+        return `${yyyy}-${mm}`;
+    };
 }
