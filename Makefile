@@ -23,5 +23,7 @@ build: clean
 	npx rollup build/background/install.js --file build/background/install.bundle.js --validate
 	npx rollup build/background/background.js --file build/background/background.bundle.js --validate
 	npx rollup build/view/popup/popup.js --file build/view/popup/popup.bundle.js --validate
+	npx rollup build/view/settings/settings.js --file build/view/settings/settings.bundle.js --validate
+	npx rollup build/content/main.js --file build/content/main.bundle.js --validate
 	mkdir extension
 	cd build/; 	zip -r ../extension/extension.zip .

@@ -24,7 +24,7 @@ export class ArrowexTimer extends Observable {
         this.storage = storage;
         this.datetimeManager = datetimeManager;
         this._settings = new ArrowexTimerSettings(this.storage);
-        this.storage.onChange(this.updateState);
+        this.storage.onChange(() => this.updateState());
     }
 
     async init(): Promise<void> {

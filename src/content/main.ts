@@ -15,14 +15,14 @@ async function main() {
     const arrowexTimer = new ArrowexTimer(storage, datetimeManager);
     const chromeApi = new ChromeAPI();
     const instructionTimer = new InstructionTimer(domInspector, arrowexTimer.settings, chromeApi);
-    const orchestrator = new Orchestrator(domInspector, instructionTimer, arrowexTimer, datetimeManager);
+    const orchestrator = new Orchestrator(domInspector, instructionTimer, arrowexTimer, datetimeManager, chromeApi);
     const taskCounter = new TaskCounter(domInspector, arrowexTimer);
     const ntaNotifier = new NtaNotifier(domInspector, chromeApi, datetimeManager);
     await arrowexTimer.init();
 
     await orchestrator.run();
     await taskCounter.run()
-    setTimeout(ntaNotifier.run, 5000);
+    setTimeout(() => ntaNotifier.run(), 5000);
 
 }
 

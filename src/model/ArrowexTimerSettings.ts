@@ -39,37 +39,152 @@ export class ArrowexTimerSettings {
             autoSubmitTimes: this._autoSubmitTimes
         }
 
-        await this.storage.set(settings);
+        await this.storage.set({"settings": settings});
 
     }
 
-    get instructionTime(): number {
-        return this._instructionTime;
+        get
+        instructionTime()
+    :
+        number
+        {
+            return this._instructionTime;
+        }
+
+        get
+        warnIfForgotToStart()
+    :
+        boolean
+        {
+            return this._warnIfForgotToStart;
+        }
+
+        get
+        moneyEarned()
+    :
+        {
+            [index
+        :
+            string
+        ]:
+            any
+        }
+        {
+            return this._moneyEarned;
+        }
+
+        get
+        submitTimeEnabled()
+    :
+        boolean
+        {
+            return this._submitTimeEnabled;
+        }
+
+        get
+        submitTime()
+    :
+        number
+        {
+            return this._submitTime;
+        }
+
+        get
+        instructionTimeEnabled()
+    :
+        boolean
+        {
+            return this._instructionTimeEnabled;
+        }
+
+        get
+        autoSubmitTimes()
+    :
+        {
+            [p
+        :
+            string
+        ]:
+            any
+        }
+        {
+            return this._autoSubmitTimes;
+        }
+
+        set
+        warnIfForgotToStart(value
+    :
+        boolean
+    )
+        {
+            this._warnIfForgotToStart = value;
+        }
+
+        set
+        moneyEarned(value
+    :
+        {
+            [p
+        :
+            string
+        ]:
+            any
+        }
+    )
+        {
+            this._moneyEarned = value;
+        }
+
+        set
+        submitTimeEnabled(value
+    :
+        boolean
+    )
+        {
+            this._submitTimeEnabled = value;
+        }
+
+        set
+        submitTime(value
+    :
+        number
+    )
+        {
+            this._submitTime = value;
+        }
+
+        set
+        instructionTimeEnabled(value
+    :
+        boolean
+    )
+        {
+            this._instructionTimeEnabled = value;
+        }
+
+        set
+        instructionTime(value
+    :
+        number
+    )
+        {
+            this._instructionTime = value;
+        }
+
+        set
+        autoSubmitTimes(value
+    :
+        {
+            [p
+        :
+            string
+        ]:
+            any
+        }
+    )
+        {
+            this._autoSubmitTimes = value;
+        }
+
+
     }
-
-    get warnIfForgotToStart(): boolean {
-        return this._warnIfForgotToStart;
-    }
-
-    get moneyEarned(): { [index: string]: any } {
-        return this._moneyEarned;
-    }
-
-    get submitTimeEnabled(): boolean {
-        return this._submitTimeEnabled;
-    }
-
-    get submitTime(): number {
-        return this._submitTime;
-    }
-
-    get instructionTimeEnabled(): boolean {
-        return this._instructionTimeEnabled;
-    }
-
-    get autoSubmitTimes(): { [p: string]: any } {
-        return this._autoSubmitTimes;
-    }
-
-
-}

@@ -18,7 +18,7 @@ export class NtaNotifier {
 
     run() {
         this.checkForNta();
-        setTimeout(this.checkForNta, this.datetimeManager.convertMinutesToMilliseconds(180));
+        setTimeout(() => this.checkForNta(), this.datetimeManager.convertMinutesToMilliseconds(180));
     }
 
     private checkForNta() {

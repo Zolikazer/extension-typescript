@@ -18,18 +18,20 @@ export class Orchestrator {
     private datetimeManager: DatetimeManager;
 
     constructor(domInspector: DomInspector, instructionTimer: InstructionTimer, arrowexTimer: ArrowexTimer,
-                datetimeManager: DatetimeManager) {
-        this.chromeApi.sendMessage({msg: EWOQ_OPENED});
+                datetimeManager: DatetimeManager, chromeApi: ChromeAPI) {
+        this.chromeApi = chromeApi;
         this.domInspector = domInspector;
         this.instructionTimer = instructionTimer;
         this.arrowexTimer = arrowexTimer;
-        this.lastBeep = this.datetimeManager.getCurrentTimeInPst();
         this.datetimeManager = datetimeManager;
+        this.lastBeep = this.datetimeManager.getCurrentTimeInPst();
+        this.chromeApi.sendMessage({msg: EWOQ_OPENED});
     }
 
     async run() {
+        await this.orchestrate();
         MutationObserver = window.MutationObserver;
-        const observer = new MutationObserver(this.orchestrate);
+        const observer = new MutationObserver(() => this.orchestrate());
         observer.observe(document, {
             subtree: true,
             attributes: true
@@ -39,10 +41,12 @@ export class Orchestrator {
 
     private async orchestrate() {
         if (!this.isRatingPage()) {
+            console.log("not rating pae");
             return;
         }
 
         const pageType = this.getPageType();
+        console.log("Page type: ", pageType)
         switch (pageType) {
             case INSTRUCTION_PAGE:
                 await this.arrowexTimer.stopTimer();
@@ -60,7 +64,7 @@ export class Orchestrator {
     }
 
 
-    private getPageType() {
+    private getPageType(): string {
         if (this.domInspector.getContinueButton() !== undefined) {
             return INSTRUCTION_PAGE;
         }
@@ -78,7 +82,7 @@ export class Orchestrator {
     }
 
     private warnToSubmit() {
-        let submitWarnTimeout = setTimeout(this.warnToSubmit, ONE_SECOND_IN_MILLISECONDS);
+        let submitWarnTimeout = setTimeout(() => this.warnToSubmit, ONE_SECOND_IN_MILLISECONDS);
 
         const currentTime = this.datetimeManager.getCurrentTimeInPst();
         if (this.shouldWarnToSubmit(currentTime)) {

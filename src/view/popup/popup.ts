@@ -15,6 +15,8 @@ class Popup {
     constructor(arrowexTimer: ArrowexTimer, chromeApi: ChromeAPI) {
         this.arrowexTimer = arrowexTimer;
         this.chromeApi = chromeApi;
+
+        this.checkForIfDetached();
     }
 
     run(): void {
@@ -152,7 +154,7 @@ class Popup {
 
     refreshEverySeconds() {
         const oneSeconds = 1000;
-        window.setInterval(() => this.render, oneSeconds);
+        window.setInterval(() => this.render(), oneSeconds);
 
     }
 }
@@ -210,7 +212,7 @@ async function main() {
     popupDisplay.run();
     await popupEventHandler.run();
 
-    arrowexTimer.onChange(popupDisplay.render);
+    arrowexTimer.onChange(() => popupDisplay.render());
 
 
 }

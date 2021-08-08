@@ -4,7 +4,7 @@ export class ChromeStorage {
         return new Promise<Object>((resolve, reject) => {
             try {
                 // @ts-ignore
-                chrome.storage.sync.get(keys, function (result) {
+                chrome.storage.sync.get(keys, (result) => {
                     resolve(result);
                 });
             } catch (ex) {

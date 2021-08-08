@@ -44,7 +44,7 @@ export class TaskCounter {
             if (submitButtonFound && (newSubmitButtonRendered || taskNameChanged)) {
                 this.submitButton = currentSubmitButton;
                 this.taskName = currentTaskName;
-                currentSubmitButton.addEventListener("click", this.tryToCountTask);
+                currentSubmitButton.addEventListener("click", () => this.tryToCountTask());
 
                 console.log("%c EVENT LISTENER ADDED", "background: #222; color: #bada55");
             }

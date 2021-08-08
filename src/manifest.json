@@ -12,10 +12,10 @@
   "content_scripts": [
     {
       "js": [
-        "content/main.js"
+        "content/main.bundle.js"
       ],
       "matches": [
-        "file:///*/tests/resources/website/*",
+        "file:///*/test/e2e/resources/website/*",
         "https://rating.ewoq.google.com/*"
       ],
       "run_at": "document_end"
