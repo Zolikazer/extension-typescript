@@ -7,7 +7,7 @@ import {ChromeStorage} from "../../chrome/ChromeStorage";
 import {renderTask} from "../../common/utils";
 
 
-async function render() {
+async function render(chromeStorage: ChromeStorage) {
     const tasks = await chromeStorage.get("tasks");
     let taskStats = document.getElementById("task-stats");
     for (const [taskName, taskData] of Object.entries(tasks.tasks)) {
@@ -19,4 +19,4 @@ async function render() {
 
 const chromeStorage = new ChromeStorage();
 
-render();
+render(chromeStorage);

@@ -7,7 +7,7 @@ import {DatetimeManager} from "../../datetime/datetimeManager";
 const DETACHED_POPUP_WINDOW_HEIGHT = 510;
 const DETACHED_POPUP_WINDOW_WIDTH = 200;
 
-class Popup {
+export class Popup {
     private readonly arrowexTimer: ArrowexTimer;
     private readonly chromeApi: ChromeAPI;
     private isDetached: boolean;
@@ -37,13 +37,8 @@ class Popup {
 
     private renderCountingStatus() {
         const countingStatusDom = document.getElementById("counting-status");
+        countingStatusDom.innerHTML = this.getCountingStatus();
 
-        if (this.arrowexTimer.isCounting) {
-            countingStatusDom.innerHTML = "<span style='color:#006400;font-weight:bold'>Counting</span>";
-
-        } else {
-            countingStatusDom.innerHTML = "<span style='color:#FF0000;font-weight:bold'>Not counting</span>";
-        }
     }
 
     private renderWorkedTime() {
@@ -54,11 +49,9 @@ class Popup {
 
     private renderMoneyEarned() {
         if (this.arrowexTimer.settings.moneyEarned.payrate !== 0 && this.arrowexTimer.settings.moneyEarned.conversionRate !== null) {
-            const workedHours = this.arrowexTimer.workedSeconds / 3600;
-            const moneyEarned = workedHours * this.arrowexTimer.settings.moneyEarned.payrate * this.arrowexTimer.settings.moneyEarned.conversionRate;
             const moneyEarnedDom = document.getElementById("money-earned");
 
-            moneyEarnedDom.innerHTML = `${moneyEarned.toFixed(2)} ${this.arrowexTimer.settings.moneyEarned.currency}`;
+            moneyEarnedDom.innerHTML = this.getMoneyEarned();
         }
     }
 
@@ -125,6 +118,12 @@ class Popup {
         }
     }
 
+    refreshEverySeconds() {
+        const oneSeconds = 1000;
+        window.setInterval(() => this.render(), oneSeconds);
+
+    }
+
     renderDetachedPopupHelp() {
         this.chromeApi.getCurrentWindow((window) => {
             try {
@@ -152,10 +151,21 @@ class Popup {
 
     }
 
-    refreshEverySeconds() {
-        const oneSeconds = 1000;
-        window.setInterval(() => this.render(), oneSeconds);
+    getCountingStatus(): string {
+        if (this.arrowexTimer.isCounting) {
+            return "<span style='color:#006400;font-weight:bold'>Counting</span>";
 
+        } else {
+            return "<span style='color:#FF0000;font-weight:bold'>Not counting</span>";
+        }
+
+    }
+
+    getMoneyEarned(): string {
+        const workedHours = this.arrowexTimer.workedSeconds / 3600;
+        const moneyEarned = workedHours * this.arrowexTimer.settings.moneyEarned.payrate * this.arrowexTimer.settings.moneyEarned.conversionRate;
+
+        return `${moneyEarned.toFixed(2)} ${this.arrowexTimer.settings.moneyEarned.currency}`
     }
 }
 

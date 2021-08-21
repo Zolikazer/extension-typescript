@@ -1,5 +1,6 @@
 import {ChromeStorage} from "../../src/chrome/ChromeStorage";
 import {DatetimeManager} from "../../src/datetime/datetimeManager";
+import {ArrowexTimer} from "../../src/model/ArrowexTimer";
 
 export class ChromeStorageMock extends ChromeStorage {
     private storage: { [index: string]: any };
@@ -17,7 +18,7 @@ export class ChromeStorageMock extends ChromeStorage {
         this.storage = value;
     }
 
-    onChange(callback: (ev: Event) => void): void  {
+    onChange(callback: (ev: Event) => void): void {
     }
 
 
@@ -33,3 +34,17 @@ export class DatetimeMangerMock extends DatetimeManager {
         this.pstTime = time;
     }
 }
+
+export class ArrowexTimerMock extends ArrowexTimer {
+    private isCountingMock: boolean;
+
+    set isCounting(isCounting: boolean) {
+        this.isCountingMock = isCounting;
+    }
+
+    get isCounting(): boolean {
+        return false;
+    }
+
+}
+
