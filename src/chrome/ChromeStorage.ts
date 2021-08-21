@@ -27,7 +27,6 @@ export class ChromeStorage {
     }
 
     onChange(callback: (ev: Event) => void): void  {
-        console.log("changed!")
         // @ts-ignore
         chrome.storage.onChanged.addListener(callback);
 

@@ -10,11 +10,13 @@ const DETACHED_POPUP_WINDOW_WIDTH = 200;
 export class Popup {
     private readonly arrowexTimer: ArrowexTimer;
     private readonly chromeApi: ChromeAPI;
+    private readonly popupElementBuilder: PopupElementBuilder
     private isDetached: boolean;
 
-    constructor(arrowexTimer: ArrowexTimer, chromeApi: ChromeAPI) {
+    constructor(arrowexTimer: ArrowexTimer, chromeApi: ChromeAPI, popupElementBuilder: PopupElementBuilder) {
         this.arrowexTimer = arrowexTimer;
         this.chromeApi = chromeApi;
+        this.popupElementBuilder = popupElementBuilder;
 
         this.checkForIfDetached();
     }
@@ -37,7 +39,7 @@ export class Popup {
 
     private renderCountingStatus() {
         const countingStatusDom = document.getElementById("counting-status");
-        countingStatusDom.innerHTML = this.getCountingStatus();
+        countingStatusDom.innerHTML = this.popupElementBuilder.getCountingStatus();
 
     }
 
@@ -51,7 +53,7 @@ export class Popup {
         if (this.arrowexTimer.settings.moneyEarned.payrate !== 0 && this.arrowexTimer.settings.moneyEarned.conversionRate !== null) {
             const moneyEarnedDom = document.getElementById("money-earned");
 
-            moneyEarnedDom.innerHTML = this.getMoneyEarned();
+            moneyEarnedDom.innerHTML = this.popupElementBuilder.getMoneyEarned();
         }
     }
 
@@ -151,6 +153,15 @@ export class Popup {
 
     }
 
+}
+
+export class PopupElementBuilder {
+    private arrowexTimer: ArrowexTimer;
+
+    constructor(arrowexTimer: ArrowexTimer) {
+        this.arrowexTimer = arrowexTimer;
+    }
+
     getCountingStatus(): string {
         if (this.arrowexTimer.isCounting) {
             return "<span style='color:#006400;font-weight:bold'>Counting</span>";
@@ -167,7 +178,9 @@ export class Popup {
 
         return `${moneyEarned.toFixed(2)} ${this.arrowexTimer.settings.moneyEarned.currency}`
     }
+
 }
+
 
 class PopupEventHandler {
     private readonly arrowexTimer: ArrowexTimer;
@@ -215,7 +228,8 @@ async function main() {
     const datetimeManager = new DatetimeManager();
 
     const arrowexTimer = new ArrowexTimer(chromeStorage, datetimeManager);
-    const popupDisplay = new Popup(arrowexTimer, chromeApi);
+    const popupElementBuilder = new PopupElementBuilder(arrowexTimer);
+    const popupDisplay = new Popup(arrowexTimer, chromeApi, popupElementBuilder);
     const popupEventHandler = new PopupEventHandler(arrowexTimer, chromeApi);
 
     await arrowexTimer.init();

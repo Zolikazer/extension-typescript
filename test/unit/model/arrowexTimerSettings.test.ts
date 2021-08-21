@@ -1,9 +1,12 @@
 import {ArrowexTimerSettings} from "../../../src/model/ArrowexTimerSettings";
 import {settingsTestData} from "../testDatas";
 import {ChromeStorageMock} from "../mockImplementations";
+import {anything, deepEqual, instance, mock, verify, when} from "ts-mockito";
+import {ChromeStorage} from "../../../src/chrome/ChromeStorage";
 
 describe('Arrowex Timer Setting', function () {
-    const storage = new ChromeStorageMock();
+    const storageMock = mock(ChromeStorage);
+    const storage = instance(storageMock);
     const arrowexTimerSettings = new ArrowexTimerSettings(storage);
 
     it('should init from chrome', function () {
@@ -18,11 +21,12 @@ describe('Arrowex Timer Setting', function () {
     });
 
     it('should save its state to chrome when save state called', async function () {
-        arrowexTimerSettings.updateStateWith(settingsTestData);
-        jest.spyOn(storage, "set");
+        when(storageMock.set(anything())).thenReturn()
 
+        arrowexTimerSettings.updateStateWith(settingsTestData);
         await arrowexTimerSettings.saveState();
-        expect(storage.set).toBeCalledWith(settingsTestData);
+
+        verify(storageMock.set(deepEqual({settings: settingsTestData}))).called()
     });
 
 });

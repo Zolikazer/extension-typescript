@@ -19,7 +19,7 @@ EXTENSION_PATH = "chrome-extension://" + EXTENSION_ID
 
 
 class TestBase(TestCase):
-    EXTENSION_EXECUTABLE_PATH = convert_path("../../extension/extension.zip")
+    EXTENSION_EXECUTABLE_PATH = convert_path("../../extension/extension_to_e2e.zip")
 
     TASK_ONE_URL = "file://" + convert_path("resources/website/task_1.html")
     TASK_TWO_URL = "file://" + convert_path("resources/website/task_2.html")

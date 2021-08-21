@@ -1,6 +1,7 @@
 import {DomInspector} from "./DomInspector";
 import {ChromeAPI} from "../chrome/ChromeAPI";
 import {DatetimeManager} from "../datetime/datetimeManager";
+import {NTA} from "../common/messages";
 
 export class NtaNotifier {
     private static LOCATIONS = ["https://rating.ewoq.google.com/u/0/home",
@@ -29,7 +30,7 @@ export class NtaNotifier {
 
             if (!isActive) {
                 console.log("sending msg...")
-                this.chromeApi.sendMessage({msg: "nta"})
+                this.chromeApi.sendMessage({msg: NTA})
             }
         }
     }

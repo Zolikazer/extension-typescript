@@ -13,8 +13,10 @@ class Worksheet {
     }
 
     render() {
-        this.renderYesterdayStat();
-        this.renderThisMonthStat();
+        if (this.arrowexTimer.worksheet !== {}) {
+            this.renderYesterdayStat();
+            this.renderThisMonthStat();
+        }
     }
 
 

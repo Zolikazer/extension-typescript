@@ -1,6 +1,7 @@
 {
   "name": "Arrowex Timer Extension",
   "version": "3",
+  "key": "Z2VjaQ==",
   "description": "The most awesome rater extension!",
   "permissions": [
     "storage",

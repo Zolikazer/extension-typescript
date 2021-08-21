@@ -1,4 +1,4 @@
-import {calculateRph, getWorkedTimeString} from "../../src/common/utils";
+import {calculateRph, getWorkedTimeString} from "../../../src/common/utils";
 
 describe('utils', function () {
     it('should calculate rph', function () {

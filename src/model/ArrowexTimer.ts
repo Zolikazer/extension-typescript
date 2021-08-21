@@ -49,6 +49,9 @@ export class ArrowexTimer extends Observable {
 
     startTimer = async (): Promise<void> => {
         const startTime = this.datetimeManager.getCurrentTimeInPst();
+        this._startTime = startTime;
+        this._isCounting = true;
+        this._lastSubmit = startTime;
 
         await this.storage.set({
             "startTime": startTime,
@@ -60,9 +63,12 @@ export class ArrowexTimer extends Observable {
     stopTimer = async (): Promise<void> => {
         if (this._isCounting) {
             const stopTime = this.datetimeManager.getCurrentTimeInPst();
+            const workedSeconds = this.workedSeconds;
+            this._stopTime = stopTime;
+            this._isCounting = false;
 
             await this.storage.set({
-                "workedSeconds": this.workedSeconds,
+                "workedSeconds": workedSeconds,
                 "stopTime": stopTime,
                 "isCounting": false
             })

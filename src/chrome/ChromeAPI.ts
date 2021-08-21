@@ -45,7 +45,7 @@ export class ChromeAPI {
             type: type,
             iconUrl: iconUrl
         });
-
+        console.log("notifcation created?")
     }
 }
 
