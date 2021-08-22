@@ -4,6 +4,7 @@ dist
 test/e2e/venv
 extension/
 build
+publish
 test/e2e/__pycache__/
 test/e2e/resources/chromedriver
 test/e2e/resources/chromedriver_linux64.zip

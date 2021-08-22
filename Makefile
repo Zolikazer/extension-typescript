@@ -5,14 +5,11 @@ clean:
 	rm -rf dist
 	rm -rf extension
 	rm -rf build
+	rm -rf publish
 
 e2e_venv:
 	python3 -m venv ./test/e2e/venv
 	source ./test/e2e/venv/bin/activate && pip install -r ./test/e2e/requirements.txt
-
-e2e_test_env: build
-	source test/e2e/venv/bin/activate; \
-	python -m unittest ./test/e2e/test_env.py
 
 build: clean
 	npm run compile
@@ -36,16 +33,19 @@ build: clean
 	cd build/; 	zip -r ../extension/extension.zip .
 
 publish: build
-	npx javascript-obfuscator build/background/install.bundle.js --output build/background/install.bundle.js
-	npx javascript-obfuscator build/background/background.bundle.js --output build/background/background.bundle.js
-	npx javascript-obfuscator build/background/background.bundle.js --output build/content/main.bundle.js
+	mkdir -p publish
+	cp -r build/* publish/
 
-	npx javascript-obfuscator build/background/background.bundle.js --output build/view/popup/popup.bundle.js
-	npx javascript-obfuscator build/view/settings/settings.bundle.js --output build/view/settings/settings.bundle.js
-	npx javascript-obfuscator build/view/tasks/tasks.bundle.js --output build/view/tasks/tasks.bundle.js
-	npx javascript-obfuscator build/view/worksheet/worksheet.bundle.js --output build/view/worksheet/worksheet.bundle.js
+	npx javascript-obfuscator publish/background/install.bundle.js --output publish/background/install.bundle.js
+	npx javascript-obfuscator publish/background/background.bundle.js --output publish/background/background.bundle.js
+	npx javascript-obfuscator publish/content/main.bundle.js --output publish/content/main.bundle.js
 
-	cd build/; 	zip -r ../extension/extension_to_publish.zip .
+	npx javascript-obfuscator publish/view/popup/popup.bundle.js --output publish/view/popup/popup.bundle.js
+	npx javascript-obfuscator publish/view/settings/settings.bundle.js --output publish/view/settings/settings.bundle.js
+	npx javascript-obfuscator publish/view/tasks/tasks.bundle.js --output publish/view/tasks/tasks.bundle.js
+	npx javascript-obfuscator publish/view/worksheet/worksheet.bundle.js --output publish/view/worksheet/worksheet.bundle.js
+
+	cd publish/; 	zip -r ../extension/extension_to_publish.zip .
 
 test:
 	npm run test
@@ -57,3 +57,7 @@ e2e_test:
 smoke_test:
 	source test/e2e/venv/bin/activate; \
 	python -m unittest discover -p "unit_*.py" -s test/e2e;
+
+define remove
+    sed 's/{NAME}/$(1)/' greetings.tmpl >$(2).txt
+endef

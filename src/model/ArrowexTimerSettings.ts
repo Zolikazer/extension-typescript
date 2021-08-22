@@ -40,7 +40,7 @@ export class ArrowexTimerSettings {
             autoSubmitTimes: this._autoSubmitTimes
         }
 
-        await this.storage.set({"settings": settings});
+        await this.storage.set({settings: settings});
 
     }
 

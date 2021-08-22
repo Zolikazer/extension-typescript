@@ -54,9 +54,9 @@ export class ArrowexTimer extends Observable {
         this._lastSubmit = startTime;
 
         await this.storage.set({
-            "startTime": startTime,
-            "isCounting": true,
-            "lastSubmit": startTime
+            startTime: startTime,
+            isCounting: true,
+            lastSubmit: startTime
         });
     }
 
@@ -68,9 +68,9 @@ export class ArrowexTimer extends Observable {
             this._isCounting = false;
 
             await this.storage.set({
-                "workedSeconds": workedSeconds,
-                "stopTime": stopTime,
-                "isCounting": false
+                workedSeconds: workedSeconds,
+                stopTime: stopTime,
+                isCounting: false
             })
         }
     }
@@ -80,15 +80,15 @@ export class ArrowexTimer extends Observable {
             this.updateWorksheet();
 
             await this.storage.set({
-                "taskCount": 0,
-                "startTime": 0,
-                "stopTime": 0,
-                "workedSeconds": 0,
-                "isCounting": false,
-                "currentTaskName": null,
-                "tasks": {},
-                "lastSubmit": null,
-                "worksheet": this._worksheet
+                taskCount: 0,
+                startTime: 0,
+                stopTime: 0,
+                workedSeconds: 0,
+                isCounting: false,
+                currentTaskName: null,
+                tasks: {},
+                lastSubmit: null,
+                worksheet: this._worksheet
             });
         }
     }
@@ -99,10 +99,10 @@ export class ArrowexTimer extends Observable {
         this.updateTasks(taskName, timeToComplete);
 
         await this.storage.set({
-            "taskCount": this._taskCount + 1,
-            "currentTaskName": taskName,
-            "tasks": this._tasks,
-            "lastSubmit": currentTime
+            taskCount: this._taskCount + 1,
+            currentTaskName: taskName,
+            tasks: this._tasks,
+            lastSubmit: currentTime
         })
 
     }
