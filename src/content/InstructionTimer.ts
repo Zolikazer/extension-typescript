@@ -4,18 +4,16 @@ import {ChromeAPI} from "../chrome/ChromeAPI";
 import {BEEP} from "../common/messages";
 
 export class InstructionTimer {
-    private domInspector: DomInspector;
-    private settings: ArrowexTimerSettings;
-    private chromeApi: ChromeAPI;
+    private readonly settings: ArrowexTimerSettings;
+    private readonly chromeApi: ChromeAPI;
 
-    constructor(domInspector: DomInspector, settings: ArrowexTimerSettings, chromeApi: ChromeAPI) {
-        this.domInspector = domInspector;
+    constructor(settings: ArrowexTimerSettings, chromeApi: ChromeAPI) {
         this.settings = settings;
         this.chromeApi = chromeApi;
     }
 
-    addTimerToInstruction = () => {
-        const isTimerNotAdded: boolean = this.domInspector.getArrowexTimer() === null;
+    addTimerToInstruction() {
+        const isTimerNotAdded = DomInspector.getArrowexTimer() === null;
         if (isTimerNotAdded) {
             if (this.settings.instructionTimeEnabled) {
                 const instructionClock = this.constructTimer(this.settings.instructionTime);
@@ -25,10 +23,10 @@ export class InstructionTimer {
     }
 
     private constructTimer = (instructionTime: number): NodeJS.Timer => {
-        const instructionFooter = this.domInspector.getInstructionFooter();
+        const instructionFooter = DomInspector.getInstructionFooter();
         instructionFooter.insertAdjacentHTML("afterbegin", this.getTimerHtml());
 
-        const clock: Element = this.domInspector.getArrowexClock();
+        const clock: Element = DomInspector.getArrowexClock();
         clock.innerHTML = new Date(instructionTime * 1000).toISOString().substr(14, 5);
 
         const instructionClock = setInterval(() => {
@@ -48,7 +46,7 @@ export class InstructionTimer {
     }
 
     private clearTimerIfUserBeginRating = (instructionClock: NodeJS.Timer) => {
-        const continueButton = this.domInspector.getContinueButton();
+        const continueButton = DomInspector.getContinueButton();
         continueButton.addEventListener("click", () => {
             clearInterval(instructionClock);
         })

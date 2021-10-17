@@ -1,29 +1,22 @@
-import {DomInspector} from "./DomInspector";
 import {ChromeStorage} from "../chrome/ChromeStorage";
-import {DatetimeManager} from "../datetime/datetimeManager";
 import {ArrowexTimer} from "../model/ArrowexTimer";
-import {Orchestrator} from "./Orchestrator";
-import {InstructionTimer} from "./InstructionTimer";
+import {Orchestrator} from "./orchestrator";
 import {ChromeAPI} from "../chrome/ChromeAPI";
 import {TaskCounter} from "./TaskCounter";
-import {NtaNotifier} from "./NtaNotifier";
+import {PageFactory} from "./page";
 
 async function main() {
-    const domInspector = new DomInspector();
     const storage = new ChromeStorage();
-    const datetimeManager = new DatetimeManager();
-    const arrowexTimer = new ArrowexTimer(storage, datetimeManager);
+    const arrowexTimer = new ArrowexTimer(storage);
     const chromeApi = new ChromeAPI();
-    const instructionTimer = new InstructionTimer(domInspector, arrowexTimer.settings, chromeApi);
-    const orchestrator = new Orchestrator(domInspector, instructionTimer, arrowexTimer, datetimeManager, chromeApi);
-    const taskCounter = new TaskCounter(domInspector, arrowexTimer);
-    const ntaNotifier = new NtaNotifier(domInspector, chromeApi, datetimeManager);
-    await arrowexTimer.init();
+    const pageFactory = new PageFactory(chromeApi, arrowexTimer);
+    const orchestrator = new Orchestrator(pageFactory, chromeApi);
+    const taskCounter = new TaskCounter(arrowexTimer);
 
+    await arrowexTimer.init();
     await orchestrator.run();
-    await taskCounter.run()
-    setTimeout(() => ntaNotifier.run(), 5000);
+    await taskCounter.countTaskSubmits()
 
 }
 
-main().then(r => console.log("main script started"));
+main().then(() => console.log("main script started"));

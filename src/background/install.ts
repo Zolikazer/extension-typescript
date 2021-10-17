@@ -20,7 +20,8 @@ chrome.runtime.onInstalled.addListener((details) => {
                 instructionTimeEnabled: true,
                 instructionTime: 120
             },
-            worksheet: {}
+            worksheet: {},
+            premium: {licenseKey: null, license: null}
         })
         console.log("installed")
         // @ts-ignore

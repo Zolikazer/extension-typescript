@@ -1,15 +1,13 @@
 import {ArrowexTimer} from "../../model/ArrowexTimer";
-import {DatetimeManager} from "../../datetime/datetimeManager";
+import {DatetimeUtils} from "../../datetime/datetimeUtils";
 import {calculateRph, getWorkedTimeString} from "../../common/utils";
 import {ChromeStorage} from "../../chrome/ChromeStorage";
 
 class Worksheet {
     private readonly arrowexTimer: ArrowexTimer;
-    private readonly datetimeManager: DatetimeManager;
 
-    constructor(arrowexTimer: ArrowexTimer, datetimeManager: DatetimeManager) {
+    constructor(arrowexTimer: ArrowexTimer) {
         this.arrowexTimer = arrowexTimer;
-        this.datetimeManager = datetimeManager;
     }
 
     render() {
@@ -30,8 +28,8 @@ class Worksheet {
     }
 
     renderThisMonthStat() {
-        const currentDateInPst = new Date(this.datetimeManager.getCurrentTimeInPst());
-        const currentYearAndMonth = this.datetimeManager.getYYYYMMString(currentDateInPst);
+        const currentDateInPst = new Date(DatetimeUtils.getCurrentTimeInPst());
+        const currentYearAndMonth = DatetimeUtils.getYYYYMMString(currentDateInPst);
 
         const [taskCount, workedSeconds] = this.collectMonthTaskCountAndWorkedSeconds(this.arrowexTimer.worksheet, currentYearAndMonth);
 
@@ -40,12 +38,12 @@ class Worksheet {
 
     }
 
-    collectMonthTaskCountAndWorkedSeconds(worksheet: { [index: string]: any }, YYYYMMString: string) {
+    collectMonthTaskCountAndWorkedSeconds(worksheet: { [index: string]: any }, YYYYMMDateString: string) {
         let totalTaskCount = 0;
         let totalWorkedSecond = 0;
 
         for (const [date, data] of Object.entries(worksheet)) {
-            if (date.slice(0, 7) === YYYYMMString) {
+            if (date.slice(0, 7) === YYYYMMDateString) {
                 totalTaskCount += data.taskCount;
                 totalWorkedSecond += data.workedSeconds;
 
@@ -71,9 +69,8 @@ class Worksheet {
 
 async function main() {
     const chromeStorage = new ChromeStorage();
-    const datetimeManager = new DatetimeManager();
-    const arrowexTimer = new ArrowexTimer(chromeStorage, datetimeManager);
-    const worksheet = new Worksheet(arrowexTimer, datetimeManager);
+    const arrowexTimer = new ArrowexTimer(chromeStorage);
+    const worksheet = new Worksheet(arrowexTimer);
 
     await arrowexTimer.init();
 

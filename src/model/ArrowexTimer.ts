@@ -1,7 +1,7 @@
 import {ChromeStorage} from "../chrome/ChromeStorage";
 import {Observable} from "./Observable";
 import {ArrowexTimerSettings} from "./ArrowexTimerSettings";
-import {DatetimeManager} from "../datetime/datetimeManager";
+import {DatetimeUtils} from "../datetime/datetimeUtils";
 
 export class ArrowexTimer extends Observable {
     private CHANGED = "changed"
@@ -17,12 +17,10 @@ export class ArrowexTimer extends Observable {
     private readonly _settings: ArrowexTimerSettings;
 
     private readonly storage: ChromeStorage;
-    private readonly datetimeManager: DatetimeManager;
 
-    constructor(storage: ChromeStorage, datetimeManager: DatetimeManager) {
+    constructor(storage: ChromeStorage) {
         super();
         this.storage = storage;
-        this.datetimeManager = datetimeManager;
         this._settings = new ArrowexTimerSettings(this.storage);
         this.storage.onChange(() => this.updateState());
     }
@@ -47,8 +45,8 @@ export class ArrowexTimer extends Observable {
 
     }
 
-    startTimer = async (): Promise<void> => {
-        const startTime = this.datetimeManager.getCurrentTimeInPst();
+    async startTimer(): Promise<void> {
+        const startTime = DatetimeUtils.getCurrentTimeInPst();
         this._startTime = startTime;
         this._isCounting = true;
         this._lastSubmit = startTime;
@@ -60,19 +58,17 @@ export class ArrowexTimer extends Observable {
         });
     }
 
-    stopTimer = async (): Promise<void> => {
-        if (this._isCounting) {
-            const stopTime = this.datetimeManager.getCurrentTimeInPst();
-            const workedSeconds = this.workedSeconds;
-            this._stopTime = stopTime;
-            this._isCounting = false;
+    async stopTimer(): Promise<void> {
+        const stopTime = DatetimeUtils.getCurrentTimeInPst();
+        const workedSeconds = this.workedSeconds;
+        this._stopTime = stopTime;
+        this._isCounting = false;
 
-            await this.storage.set({
-                workedSeconds: workedSeconds,
-                stopTime: stopTime,
-                isCounting: false
-            })
-        }
+        await this.storage.set({
+            workedSeconds: workedSeconds,
+            stopTime: stopTime,
+            isCounting: false
+        })
     }
 
     async resetTimer(): Promise<void> {
@@ -94,12 +90,15 @@ export class ArrowexTimer extends Observable {
     }
 
     async countTask(taskName: string): Promise<void> {
-        const currentTime = this.datetimeManager.getCurrentTimeInPst();
+        const currentTime = DatetimeUtils.getCurrentTimeInPst();
         const timeToComplete = currentTime - this._lastSubmit;
+        this._taskCount = this._taskCount + 1;
+        this._currentTaskName = taskName;
+        this._lastSubmit = currentTime;
         this.updateTasks(taskName, timeToComplete);
 
         await this.storage.set({
-            taskCount: this._taskCount + 1,
+            taskCount: this._taskCount,
             currentTaskName: taskName,
             tasks: this._tasks,
             lastSubmit: currentTime
@@ -122,7 +121,7 @@ export class ArrowexTimer extends Observable {
     }
 
     private updateWorksheet = () => {
-        const workday = this.datetimeManager.getYYYYMMDDString(new Date(this._lastSubmit));
+        const workday = DatetimeUtils.getYYYYMMDDString(new Date(this._lastSubmit));
         this._worksheet[workday] = {
             workedSeconds: this.workedSeconds,
             taskCount: this._taskCount,
@@ -167,7 +166,7 @@ export class ArrowexTimer extends Observable {
 
     get workedSeconds(): number {
         if (this._isCounting) {
-            const currentTime = this.datetimeManager.getCurrentTimeInPst();
+            const currentTime = DatetimeUtils.getCurrentTimeInPst();
             return this._workedSeconds + (currentTime - this._startTime) / 1000;
         }
 

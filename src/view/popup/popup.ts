@@ -2,7 +2,6 @@ import {ArrowexTimer} from "../../model/ArrowexTimer";
 import {calculateRph, getWorkedTimeString, renderTask} from "../../common/utils";
 import {ChromeAPI} from "../../chrome/ChromeAPI";
 import {ChromeStorage} from "../../chrome/ChromeStorage";
-import {DatetimeManager} from "../../datetime/datetimeManager";
 
 const DETACHED_POPUP_WINDOW_HEIGHT = 510;
 const DETACHED_POPUP_WINDOW_WIDTH = 200;
@@ -225,9 +224,8 @@ class PopupEventHandler {
 async function main() {
     const chromeStorage = new ChromeStorage();
     const chromeApi = new ChromeAPI();
-    const datetimeManager = new DatetimeManager();
 
-    const arrowexTimer = new ArrowexTimer(chromeStorage, datetimeManager);
+    const arrowexTimer = new ArrowexTimer(chromeStorage);
     const popupElementBuilder = new PopupElementBuilder(arrowexTimer);
     const popupDisplay = new Popup(arrowexTimer, chromeApi, popupElementBuilder);
     const popupEventHandler = new PopupEventHandler(arrowexTimer, chromeApi);

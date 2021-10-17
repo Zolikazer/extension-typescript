@@ -1,6 +1,5 @@
 import {ChromeStorage} from "../../src/chrome/ChromeStorage";
-import {DatetimeManager} from "../../src/datetime/datetimeManager";
-import {ArrowexTimer} from "../../src/model/ArrowexTimer";
+import {DatetimeUtils} from "../../src/datetime/datetimeUtils";
 
 export class ChromeStorageMock extends ChromeStorage {
     private storage: { [index: string]: any };
@@ -24,7 +23,7 @@ export class ChromeStorageMock extends ChromeStorage {
 
 }
 
-export class DatetimeMangerMock extends DatetimeManager {
+export class DatetimeMangerMock extends DatetimeUtils {
     private pstTime: number = null;
     getCurrentTimeInPst = (): number => {
         return this.pstTime;
@@ -34,17 +33,3 @@ export class DatetimeMangerMock extends DatetimeManager {
         this.pstTime = time;
     }
 }
-
-export class ArrowexTimerMock extends ArrowexTimer {
-    private isCountingMock: boolean;
-
-    set isCounting(isCounting: boolean) {
-        this.isCountingMock = isCounting;
-    }
-
-    get isCounting(): boolean {
-        return false;
-    }
-
-}
-

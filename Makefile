@@ -50,11 +50,11 @@ publish: build
 test:
 	npm run test
 
-e2e_test:
+e2e_test: build
 	source test/e2e/venv/bin/activate; \
 	python -m unittest discover -s test/e2e;
 
-smoke_test:
+smoke_test: build
 	source test/e2e/venv/bin/activate; \
 	python -m unittest discover -p "unit_*.py" -s test/e2e;
 

@@ -4,7 +4,6 @@
 
 import {ArrowexTimer} from "../../model/ArrowexTimer";
 import {ChromeStorage} from "../../chrome/ChromeStorage";
-import {DatetimeManager} from "../../datetime/datetimeManager";
 import {ArrowexTimerSettings} from "../../model/ArrowexTimerSettings";
 
 const WARN_SUBMIT_CHECKBOX = document.getElementById("submit-warn");
@@ -129,8 +128,7 @@ class SettingsDisplay {
 
 async function main() {
     const chromeStorage = new ChromeStorage();
-    const datetimeManager = new DatetimeManager();
-    const arrowexTimer = new ArrowexTimer(chromeStorage, datetimeManager);
+    const arrowexTimer = new ArrowexTimer(chromeStorage);
     const settingsDisplay = new SettingsDisplay(arrowexTimer);
     await arrowexTimer.init();
     await settingsDisplay.run();

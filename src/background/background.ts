@@ -6,7 +6,7 @@ import {ArrowexTimer} from "../model/ArrowexTimer";
 import {ChromeAPI} from "../chrome/ChromeAPI";
 import {BEEP, EWOQ_OPENED, NTA} from "../common/messages";
 import {ChromeStorage} from "../chrome/ChromeStorage";
-import {DatetimeManager, ONE_SECOND_IN_MILLISECONDS} from "../datetime/datetimeManager";
+import {DatetimeUtils, ONE_SECOND_IN_MILLISECONDS} from "../datetime/datetimeUtils";
 
 export class Background {
     private readonly arrowexTimer: ArrowexTimer;
@@ -19,13 +19,10 @@ export class Background {
         this.timerInitialized = false;
     }
 
-    run() {
-        this.listenToMessages();
-
-    }
-
     listenToMessages() {
-        this.chromeApi.onMessage(async (request) => {await this.handleMessage(request)})
+        this.chromeApi.onMessage(async (request) => {
+            await this.handleMessage(request)
+        })
     }
 
     async handleMessage(request: { [index: string]: any }) {
@@ -92,12 +89,11 @@ async function beep() {
 
 async function main() {
     const chromeStorage = new ChromeStorage();
-    const datetimeManager = new DatetimeManager();
     const chromeApi = new ChromeAPI();
-    const arrowexTimer = new ArrowexTimer(chromeStorage, datetimeManager);
+    const arrowexTimer = new ArrowexTimer(chromeStorage);
     const background = new Background(arrowexTimer, chromeApi);
 
-    background.run();
+    background.listenToMessages();
 }
 
 main();

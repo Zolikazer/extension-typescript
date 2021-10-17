@@ -1,13 +1,15 @@
 import {ArrowexTimer} from "../../../src/model/ArrowexTimer";
-import {testDataNotCounting, testDataCounting, testWorksheetData} from "../testDatas";
-import {DatetimeMangerMock, ChromeStorageMock} from "../mockImplementations";
+import {testDataCounting, testDataNotCounting, testWorksheetData} from "../testDatas";
+import {ChromeStorageMock} from "../mockImplementations";
 import deepcopy from "deepcopy";
+import {DatetimeUtils} from "../../../src/datetime/datetimeUtils";
 
 
 describe('ArrowexTimer', function () {
     const storage = new ChromeStorageMock();
-    const datetimeManager = new DatetimeMangerMock();
-    const arrowexTimer = new ArrowexTimer(storage, datetimeManager);
+    const arrowexTimer = new ArrowexTimer(storage);
+    const datetimeUtilsMock = jest.spyOn(DatetimeUtils, "getCurrentTimeInPst");
+
 
     afterEach(() => {
         jest.clearAllMocks();
@@ -30,8 +32,8 @@ describe('ArrowexTimer', function () {
 
     it('should calculate worked second dynamically if timer is running', async function () {
         // given
+        datetimeUtilsMock.mockReturnValue(10000);
         storage.setStorageTo(deepcopy(testDataCounting));
-        datetimeManager.setPstTime(10000);
         await arrowexTimer.init()
 
 
@@ -41,7 +43,7 @@ describe('ArrowexTimer', function () {
     it('should set the proper field in chrome when timer started ', async function () {
         jest.spyOn(storage, "set");
         const time = 10;
-        datetimeManager.setPstTime(time);
+        datetimeUtilsMock.mockReturnValue(time);
 
         await arrowexTimer.startTimer();
         expect(storage.set).toBeCalledWith({
@@ -55,7 +57,7 @@ describe('ArrowexTimer', function () {
     it('should set the proper field in chrome when timer stopped', async function () {
         jest.spyOn(storage, "set");
         const time = 10000;
-        datetimeManager.setPstTime(time);
+        datetimeUtilsMock.mockReturnValue(time);
         storage.setStorageTo(deepcopy(testDataCounting));
         await arrowexTimer.init()
 
@@ -71,7 +73,6 @@ describe('ArrowexTimer', function () {
     it('should set the proper field in chrome when timer stopped and update its field', async function () {
         jest.spyOn(storage, "set");
         const time = 10000;
-        datetimeManager.setPstTime(time);
         storage.setStorageTo(deepcopy(testDataCounting));
         await arrowexTimer.init()
 
@@ -88,7 +89,6 @@ describe('ArrowexTimer', function () {
     it('should set proper fields when reset timer is called', async function () {
         jest.spyOn(storage, "set");
         const time = 10000;
-        datetimeManager.setPstTime(time);
         storage.setStorageTo(deepcopy(testDataCounting));
         const expectedWorksheet = {"1970-01-01": {workedSeconds: 20, taskCount: 3}}
 
@@ -125,7 +125,7 @@ describe('ArrowexTimer', function () {
         storage.setStorageTo(deepcopy(testDataCounting));
         await arrowexTimer.init();
         const time = 30000;
-        datetimeManager.setPstTime(time);
+        datetimeUtilsMock.mockReturnValue(time);
 
         await arrowexTimer.countTask("TestName");
 
