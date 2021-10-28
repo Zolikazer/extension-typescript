@@ -4,10 +4,10 @@ from unittest import skip
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-from framework import TaskPage, Popup, TestBase
+from framework import TaskPage, Popup, PremiumedTestBase
 
 
-class TestTaskCounting(TestBase):
+class TestTaskCounting(PremiumedTestBase):
 
     def setUp(self):
         super().setUp()

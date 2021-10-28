@@ -48,4 +48,7 @@ export class DatetimeUtils {
     }
 
 
+    static getDayInMilliseconds(): number {
+        return ONE_DAY_IN_HOURS * this.getAnHourInMilliseconds();
+    }
 }

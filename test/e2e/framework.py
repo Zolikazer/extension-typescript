@@ -50,6 +50,13 @@ class TestBase(TestCase):
         self.instruction_page.visit()
 
 
+class PremiumedTestBase(TestBase):
+    def setUp(self):
+        super(PremiumedTestBase, self).setUp()
+        background_page = BackgroundPage(self.driver)
+        background_page.activate_premium()
+
+
 class BasePage(ABC):
     def __init__(self, driver, url):
         self.error_locator = "error"
@@ -205,7 +212,7 @@ class TasksPage(EwoqPage):
         pass
 
 
-class SettingsPage(EwoqPage):
+class SettingsPage(ExtensionPage):
     AUTO_STOP = "auto-stop"
     INSTRUCTION_TIMER = "instruction-time-enabled"
 
@@ -262,3 +269,64 @@ class InstructionPage(EwoqPage):
     def __init__(self, driver):
         super().__init__(driver, "file://" + convert_path("resources/website/instruction.html"))
         self.driver = driver
+
+
+class BackgroundPage(ExtensionPage):
+    def __init__(self, driver):
+        super().__init__(driver, EXTENSION_PATH + "/background/background.html")
+
+    def activate_premium(self):
+        self.visit()
+        extension_license = '''
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{"expirationDate":"2029-02-01"}
+-----BEGIN PGP SIGNATURE-----
+
+wnUEARYKAAYFAmF0cH0AIQkQ/UA/DEWj5LUWIQSN590liOLVv3KlB5/9QD8M
+RaPktSjpAQCrLiya1Fff9BMAu2xHuxzjXs/iLL7N03irp3eoB/O7yAD/a2lg
+O+F4PbBDDy3l5bMb7/DgbbeHcPiRV2be3wGvfAw=
+=hbEH
+-----END PGP SIGNATURE-----
+                                '''
+        license_key = "6a65ff"
+        self.driver.execute_script(
+            'chrome.storage.sync.set({premium: {licenseKey: "%s", license: `%s`}})' % (license_key, extension_license))
+
+
+class PremiumPage(ExtensionPage):
+    def __init__(self, driver):
+        super(PremiumPage, self).__init__(driver, EXTENSION_PATH + "/view/premium/premium.html")
+
+    @property
+    def premium_availability(self):
+        self.visit()
+        return self.find("premium-availability").text
+
+    @property
+    def expiration_date(self):
+        self.visit()
+        return self.find("premium-expiration-date").text
+
+    @property
+    def license_key_input(self):
+        self.visit()
+        return self.find("license-key-input")
+
+    @property
+    def activate_button(self):
+        self.visit()
+        return self.find("activate-premium-btn")
+
+    @property
+    def error(self):
+        return self.find("error").text
+
+    def activate_with(self, license_key: str):
+        self.visit()
+        license_key_input = self.find("license-key-input")
+        activate_button = self.find("activate-premium-btn")
+
+        license_key_input.send_keys(license_key)
+        activate_button.click()

@@ -1,5 +1,5 @@
 export class ChromeAPI {
-    sendMessage(message: { [index: string]: any }): void {
+    sendMessage(message: { [index: string]: any }) {
         // @ts-ignore
         chrome.runtime.sendMessage(message);
         console.log("msg sent")

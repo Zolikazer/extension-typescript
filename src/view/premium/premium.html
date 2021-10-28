@@ -17,17 +17,24 @@
     </div>
     <hr>
     <div>
-        <p>Your premium is valid until</p>
-        <b>2021.05.02</b>
+        <div>
+            <b id="premium-availability"></b>
+        </div>
+        <div class="mt-10">
+            <b id="premium-expiration-date"></b>
+        </div>
     </div>
-    <div class="mt-5">
+    <div id="input-div" class="mt-5">
         <label>
             Please enter license key
-            <input style="width: 50%" class="mt-5" type="number" id="conversion-rate">
+            <input style="width: 50%" class="mt-5" type="text" id="license-key-input">
         </label>
+        <div class="mt-10">
+            <button class="btn" id="activate-premium-btn">Activate</button>
+        </div>
     </div>
     <div class="mt-10">
-        <button class="btn" id="reset-btn">Activate</button>
+        <b id="error" class="text-red"></b>
     </div>
     <div>
         <p><a href="../popup/popup.html" id="back">| Back |</a></p>

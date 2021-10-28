@@ -6,16 +6,20 @@ import {ArrowexTimer} from "../model/ArrowexTimer";
 import {ChromeAPI} from "../chrome/ChromeAPI";
 import {BEEP, EWOQ_OPENED, NTA} from "../common/messages";
 import {ChromeStorage} from "../chrome/ChromeStorage";
-import {DatetimeUtils, ONE_SECOND_IN_MILLISECONDS} from "../datetime/datetimeUtils";
+import {ONE_SECOND_IN_MILLISECONDS} from "../datetime/datetimeUtils";
+import {getVerifiedPstTime} from "../adapters/adapters";
+import {PremiumManager} from "../model/Premium";
 
 export class Background {
     private readonly arrowexTimer: ArrowexTimer;
     private readonly chromeApi: ChromeAPI;
+    private readonly premiumManager: PremiumManager;
     private timerInitialized: boolean
 
-    constructor(arrowexTimer: ArrowexTimer, chromeApi: ChromeAPI) {
+    constructor(arrowexTimer: ArrowexTimer, chromeApi: ChromeAPI, premiumManager: PremiumManager) {
         this.arrowexTimer = arrowexTimer;
         this.chromeApi = chromeApi;
+        this.premiumManager = premiumManager;
         this.timerInitialized = false;
     }
 
@@ -79,6 +83,12 @@ export class Background {
             "../images/arrow_16.png"
         );
     }
+
+    async getVerifiedPstTime() {
+        const verifiedPstTime = await getVerifiedPstTime();
+        await this.premiumManager.updatePstTime(verifiedPstTime);
+
+    }
 }
 
 
@@ -90,10 +100,12 @@ async function beep() {
 async function main() {
     const chromeStorage = new ChromeStorage();
     const chromeApi = new ChromeAPI();
+    const premiumManager = new PremiumManager(chromeStorage, chromeApi);
     const arrowexTimer = new ArrowexTimer(chromeStorage);
-    const background = new Background(arrowexTimer, chromeApi);
+    const background = new Background(arrowexTimer, chromeApi, premiumManager);
 
     background.listenToMessages();
+    await background.getVerifiedPstTime();
 }
 
 main();

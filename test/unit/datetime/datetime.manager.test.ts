@@ -15,5 +15,9 @@ describe("Datetime manager", () => {
         expect(DatetimeUtils.getYYYYMMDDString(new Date(epochTimeWithTwoDigitMonthAndDay))).toBe("2021-12-11");
 
     });
+    it('should ', function () {
+        const time = DatetimeUtils.getCurrentTimeInPst();
+        console.log(DatetimeUtils.getYYYYMMDDString(new Date(time)))
+    });
 
 });

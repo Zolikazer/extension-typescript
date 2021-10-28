@@ -6,7 +6,7 @@ import {ChromeStorage} from "../../chrome/ChromeStorage";
 const DETACHED_POPUP_WINDOW_HEIGHT = 510;
 const DETACHED_POPUP_WINDOW_WIDTH = 200;
 
-export class Popup {
+export class PopupView {
     private readonly arrowexTimer: ArrowexTimer;
     private readonly chromeApi: ChromeAPI;
     private readonly popupElementBuilder: PopupElementBuilder
@@ -227,7 +227,7 @@ async function main() {
 
     const arrowexTimer = new ArrowexTimer(chromeStorage);
     const popupElementBuilder = new PopupElementBuilder(arrowexTimer);
-    const popupDisplay = new Popup(arrowexTimer, chromeApi, popupElementBuilder);
+    const popupDisplay = new PopupView(arrowexTimer, chromeApi, popupElementBuilder);
     const popupEventHandler = new PopupEventHandler(arrowexTimer, chromeApi);
 
     await arrowexTimer.init();

@@ -18,6 +18,10 @@ build: clean
 	find ./build -name "*.ts" -type f -delete
 	find ./build -name "*.js" -type f -delete
 
+	sed -i '/as openpgp from "openpgp"/d' dist/src/model/Premium.js
+	cat /home/spazo/Work/Appen/extension-typescript/node_modules/openpgp/dist/openpgp.js dist/src/model/Premium.js > /tmp/bundle.js
+	mv /tmp/bundle.js dist/src/model/Premium.js
+
 	npx rollup dist/src/background/install.js --file build/background/install.bundle.js --validate
 	npx rollup dist/src/background/background.js --file build/background/background.bundle.js --validate
 	npx rollup dist/src/content/main.js --file build/content/main.bundle.js --validate
@@ -26,6 +30,9 @@ build: clean
 	npx rollup dist/src/view/settings/settings.js --file build/view/settings/settings.bundle.js --validate
 	npx rollup dist/src/view/tasks/tasks.js --file build/view/tasks/tasks.bundle.js --validate
 	npx rollup dist/src/view/worksheet/worksheet.js --file build/view/worksheet/worksheet.bundle.js --validate
+	npx rollup dist/src/view/premium/premium.view.js --file build/view/premium/premium.bundle.js --validate
+
+#	npx browserify -p esmify dist/src/view/premium/premium.js -o build/view/premium/premium.bundle.js --standalone dsfds
 
 	mkdir extension
 	cd build/; 	zip -r ../extension/extension_to_e2e.zip .

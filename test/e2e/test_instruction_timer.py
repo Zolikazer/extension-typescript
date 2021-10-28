@@ -2,10 +2,10 @@ import time
 
 from selenium.common.exceptions import NoSuchElementException
 
-from framework import TestBase, InstructionPage, SettingsPage
+from framework import InstructionPage, SettingsPage, PremiumedTestBase
 
 
-class TestInstructionTimer(TestBase):
+class TestInstructionTimer(PremiumedTestBase):
     def setUp(self):
         super().setUp()
         self.instruction_page = InstructionPage(self.driver)

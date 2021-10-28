@@ -1,10 +1,10 @@
 import time
 from unittest import skip
 
-from framework import Popup, TestBase, TaskPage, InstructionPage
+from framework import Popup, TaskPage, InstructionPage, PremiumedTestBase
 
 
-class TestPopup(TestBase):
+class TestPopup(PremiumedTestBase):
 
     def setUp(self):
         super().setUp()
