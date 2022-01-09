@@ -281,15 +281,15 @@ class BackgroundPage(ExtensionPage):
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA512
 
-{"expirationDate":"2029-02-01"}
+{"expirationDate":"2029-02-01","verifiedPstTime":1641637970784}
 -----BEGIN PGP SIGNATURE-----
 
-wnUEARYKAAYFAmF0cH0AIQkQ/UA/DEWj5LUWIQSN590liOLVv3KlB5/9QD8M
-RaPktSjpAQCrLiya1Fff9BMAu2xHuxzjXs/iLL7N03irp3eoB/O7yAD/a2lg
-O+F4PbBDDy3l5bMb7/DgbbeHcPiRV2be3wGvfAw=
-=hbEH
+wnUEARYKAAYFAmHZysIAIQkQ/UA/DEWj5LUWIQSN590liOLVv3KlB5/9QD8M
+RaPktVlpAQCzqYFp/+95mRCQAcWn9soIcMVTY6m9+i70m/ngfINy0QD/W9mJ
+eSk4JQuIenI+wJZusLulmRyluTSV4n0YihExego=
+=9xCI
 -----END PGP SIGNATURE-----
-                                '''
+'''
         license_key = "6a65ff"
         self.driver.execute_script(
             'chrome.storage.sync.set({premium: {licenseKey: "%s", license: `%s`}})' % (license_key, extension_license))

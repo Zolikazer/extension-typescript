@@ -12,7 +12,7 @@ export class Orchestrator {
         this.chromeApi = chromeApi;
         this.pageFactory = pageFactory;
         this.currentPage = null;
-        chromeApi.sendMessage({msg: EWOQ_OPENED});
+        this.chromeApi.sendMessage({msg: EWOQ_OPENED});
 
     }
 
@@ -30,7 +30,6 @@ export class Orchestrator {
     private async orchestrate() {
         const page = this.pageFactory.getPage();
         if (this.currentPage !== page) {
-            console.log("new page")
             this.currentPage = page;
             await this.currentPage.adjustTimer();
             this.currentPage.doOtherStuff();

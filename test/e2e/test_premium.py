@@ -31,4 +31,5 @@ class TestPremium(TestBase):
 
     def test_premium_activated_with_wrong_license_key(self):
         self.premium.activate_with("asdasdas")
+        time.sleep(0.5)
         self.assertEqual("License key not found!", self.premium.error)

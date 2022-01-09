@@ -47,3 +47,7 @@ export function renderTask(taskName: string, taskData: { [index: string]: any })
 
 
 }
+
+export function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

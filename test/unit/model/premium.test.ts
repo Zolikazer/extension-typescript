@@ -8,13 +8,25 @@ import {PREMIUM_ACTIVATED} from "../../../src/common/messages";
 const LICENSE = "-----BEGIN PGP SIGNED MESSAGE-----\n" +
     "Hash: SHA512\n" +
     "\n" +
-    "{\"expirationDate\":\"2029-02-01\"}\n" +
+    "{\"expirationDate\":\"2029-02-01\",\"verifiedPstTime\":1641636859490}\n" +
     "-----BEGIN PGP SIGNATURE-----\n" +
     "\n" +
-    "wnUEARYKAAYFAmFsY4QAIQkQ/UA/DEWj5LUWIQSN590liOLVv3KlB5/9QD8M\n" +
-    "RaPktYkSAP9N10cX9EhGMcLaolQw84RpdiIUD4Qlxbh+fZyL5L2LCAD+LyX0\n" +
-    "PNWEQSW5g9RdTO0twvBAJQSY+wnZMFjLHVFPnAE=\n" +
-    "=o3Il\n" +
+    "wnUEARYKAAYFAmHZxmsAIQkQ/UA/DEWj5LUWIQSN590liOLVv3KlB5/9QD8M\n" +
+    "RaPktbTcAP9qnQR0Iz/EgNwf1RyJum+/i137vWpUHno2uVOx474AHwEAu8VY\n" +
+    "EVHAILjXQjJPFs2Ie23/Q6GFV74mqcJQcilG6w0=\n" +
+    "=xiYB\n" +
+    "-----END PGP SIGNATURE-----"
+
+const EXPIRED_LICENSE = "-----BEGIN PGP SIGNED MESSAGE-----\n" +
+    "Hash: SHA512\n" +
+    "\n" +
+    "{\"expirationDate\":\"2019-12-15\",\"verifiedPstTime\":1641633915515}\n" +
+    "-----BEGIN PGP SIGNATURE-----\n" +
+    "\n" +
+    "wnUEARYKAAYFAmHZyPsAIQkQ/UA/DEWj5LUWIQSN590liOLVv3KlB5/9QD8M\n" +
+    "RaPktcwpAQDgmSQJmp6adhLhoHIGR3MXlgCsRvIsK9V+k5BfGoRYggD9GgME\n" +
+    "y+IBOet4wrSWHotlI1/HNniRWHKCis6ozwqI3gs=\n" +
+    "=CuZ7\n" +
     "-----END PGP SIGNATURE-----"
 
 const TEMPERED_LICENSE = "-----BEGIN PGP SIGNED MESSAGE-----\n" +
@@ -65,8 +77,7 @@ describe('PremiumManager', function () {
         when(storageMock.get("premium")).thenResolve({
             premium: {
                 licenseKey: licenseKey,
-                license: LICENSE,
-                verifiedPstTime: verifiedPstTime
+                license: EXPIRED_LICENSE,
             }
         });
         datetimeUtilsMock.mockReturnValue(new Date(currentDate).getTime());
@@ -100,7 +111,6 @@ describe('PremiumManager', function () {
             premium: {
                 licenseKey: licenseKey,
                 license: LICENSE,
-                verifiedPstTime: verifiedPstTime
             }
         });
         await premiumManager.init();
@@ -109,27 +119,8 @@ describe('PremiumManager', function () {
             premium: {
                 licenseKey: licenseKey,
                 license: LICENSE,
-                verifiedPstTime: verifiedPstTime
             }
         }))).once();
         verify(chromeApiMock.sendMessage(deepEqual({msg: PREMIUM_ACTIVATED}))).called();
-    })
-
-    test("update verified pst time", async () => {
-        when(storageMock.get("premium")).thenResolve({
-            premium: {
-                licenseKey: licenseKey,
-                license: LICENSE,
-                verifiedPstTime: verifiedPstTime
-            }
-        });
-        await premiumManager.updatePstTime(verifiedPstTime + 15);
-        verify(storageMock.set(deepEqual({
-            premium: {
-                licenseKey: licenseKey,
-                license: LICENSE,
-                verifiedPstTime: verifiedPstTime + 15
-            }
-        }))).once();
     })
 });

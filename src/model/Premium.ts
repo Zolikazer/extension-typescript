@@ -4,7 +4,6 @@ import {CleartextMessage, Key, PublicKey} from "openpgp";
 import {ChromeAPI} from "../chrome/ChromeAPI";
 import {PREMIUM_ACTIVATED} from "../common/messages";
 import {Observable} from "./Observable";
-import {DatetimeUtils} from "../datetime/datetimeUtils";
 
 const PUBLIC_KEY_ARMORED = "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" +
     "    \n" +
@@ -22,13 +21,16 @@ const PUBLIC_KEY_ARMORED = "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" +
     "-----END PGP PUBLIC KEY BLOCK-----"
 
 export class PremiumManager extends Observable {
+    get licenseKey(): string {
+        return this._licenseKey;
+    }
     public static ACTIVATED = "activated"
 
     private readonly chromeStorage: ChromeStorage;
 
     private readonly chromeApi: ChromeAPI;
     private publicKey: PublicKey;
-    private licenseKey: string;
+    private _licenseKey: string;
     private license: string
     private _isPremiumActive: boolean;
     private _licenseExpirationDay: string;
@@ -47,12 +49,13 @@ export class PremiumManager extends Observable {
         await this.readPremiumDataFromStorage();
 
         if (this.license !== null) {
-            const cleartextMessage = await PremiumManager.getLicenseExpirationDate(this.license);
+            const cleartextMessage = await PremiumManager.readClearTextLicense(this.license);
             await PremiumManager.verifyLicense(cleartextMessage, this.publicKey);
-            this._licenseExpirationDay = JSON.parse(cleartextMessage.getText())["expirationDate"];
+            let cleartextJson = JSON.parse(cleartextMessage.getText());
+            this._licenseExpirationDay = cleartextJson["expirationDate"];
+            this.verifiedPstTime = cleartextJson["verifiedPstTime"]
 
-            this._isPremiumActive = this.verifiedPstTime < new Date(this._licenseExpirationDay).getTime()
-                + 3 * DatetimeUtils.getDayInMilliseconds();
+            this._isPremiumActive = this.verifiedPstTime < new Date(this._licenseExpirationDay).getTime();
         } else {
             this._isPremiumActive = false;
         }
@@ -75,7 +78,7 @@ export class PremiumManager extends Observable {
 
     }
 
-    private static async getLicenseExpirationDate(cleartextMessage: string) {
+    private static async readClearTextLicense(cleartextMessage: string) {
         return await openpgp.readCleartextMessage({
             cleartextMessage // parse armored message
         });
@@ -88,25 +91,30 @@ export class PremiumManager extends Observable {
 
     private async readPremiumDataFromStorage() {
         const result = await this.chromeStorage.get("premium");
-        this.licenseKey = result.premium.licenseKey;
+        this._licenseKey = result.premium.licenseKey;
         this.license = result.premium.license;
-        this.verifiedPstTime = result.premium.verifiedPstTime;
     }
 
     async activatePremium(licenseKey: string, license: string) {
         await this.chromeStorage.set({
             premium: {
                 licenseKey: licenseKey,
-                license: license,
-                verifiedPstTime: this.verifiedPstTime
+                license: license
             }
         });
         this.chromeApi.sendMessage({msg: PREMIUM_ACTIVATED});
     }
+    async renewLicense(license: string) {
+        await this.chromeStorage.set({
+            premium: {
+                licenseKey: this._licenseKey,
+                license: license
+            }
+        });
+    }
 
     private listenToMessage() {
         this.chromeApi.onMessage(async (request) => {
-            console.log("PREMIUM ACTIVATED")
             if (request.msg === PREMIUM_ACTIVATED) {
                 await this.init();
                 this.notify(PremiumManager.ACTIVATED);
@@ -116,16 +124,5 @@ export class PremiumManager extends Observable {
 
     get licenseExpirationDay(): string {
         return this._licenseExpirationDay;
-    }
-
-    async updatePstTime(verifiedPstTime: number) {
-        await this.readPremiumDataFromStorage();
-        await this.chromeStorage.set({
-            premium: {
-                licenseKey: this.licenseKey,
-                license: this.license,
-                verifiedPstTime: verifiedPstTime
-            }
-        })
     }
 }

@@ -7,8 +7,9 @@ import {ChromeAPI} from "../chrome/ChromeAPI";
 import {BEEP, EWOQ_OPENED, NTA} from "../common/messages";
 import {ChromeStorage} from "../chrome/ChromeStorage";
 import {ONE_SECOND_IN_MILLISECONDS} from "../datetime/datetimeUtils";
-import {getVerifiedPstTime} from "../adapters/adapters";
+import {getLicense} from "../adapters/adapters";
 import {PremiumManager} from "../model/Premium";
+import {sleep} from "../common/utils";
 
 export class Background {
     private readonly arrowexTimer: ArrowexTimer;
@@ -41,7 +42,6 @@ export class Background {
                     await this.arrowexTimer.init();
                     this.timerInitialized = true;
                 }
-
                 this.checkForTabClose();
                 break;
 
@@ -52,22 +52,25 @@ export class Background {
     }
 
 
-    checkForTabClose() {
+    async checkForTabClose() {
         // noinspection JSUnresolvedVariable
-        let timeout = setTimeout(() => this.checkForTabClose(), ONE_SECOND_IN_MILLISECONDS);
+        let checkForTabClose = true;
+        while (checkForTabClose) {
+            console.log("Check for tab close")
+            this.chromeApi.queryTabs({}, async (tabs) => {
+                if (!this.isEwoqOpened(tabs)) {
+                    await this.arrowexTimer.stopTimer();
+                    checkForTabClose = false;
+                }
 
-        this.chromeApi.queryTabs({}, async (tabs) => {
-            if (!this.isEwoqOpened(tabs)) {
-                await this.arrowexTimer.stopTimer();
-                clearTimeout(timeout)
-            }
-
-        })
+            })
+            await sleep(1000);
+        }
     }
 
     isEwoqOpened(tabs: any[]) {
         for (const tab of tabs) {
-            if (tab.url.includes("https://rating.ewoq.google.com/u/0/task") || tab.url.includes("website")) {
+            if (tab.url.includes("https://rating.ewoq.google.com/u/0/") || tab.url.includes("website")) {
                 return true;
             }
         }
@@ -84,9 +87,11 @@ export class Background {
         );
     }
 
-    async getVerifiedPstTime() {
-        const verifiedPstTime = await getVerifiedPstTime();
-        await this.premiumManager.updatePstTime(verifiedPstTime);
+    async checkLicense() {
+        if (this.premiumManager.licenseKey !== null) {
+            const license = await getLicense(this.premiumManager.licenseKey);
+            await this.premiumManager.renewLicense(license);
+        }
 
     }
 }
@@ -105,7 +110,8 @@ async function main() {
     const background = new Background(arrowexTimer, chromeApi, premiumManager);
 
     background.listenToMessages();
-    await background.getVerifiedPstTime();
+    await premiumManager.init();
+    await background.checkLicense();
 }
 
 main();
