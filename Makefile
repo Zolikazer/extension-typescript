@@ -65,6 +65,9 @@ smoke_test: build
 	source test/e2e/venv/bin/activate; \
 	python -m unittest discover -p "unit_*.py" -s test/e2e;
 
+deploy: publish
+	scp extension/extension_to_publish.zip root@extension:/home/extension-backend/resources/extension.zip
+
 define remove
     sed 's/{NAME}/$(1)/' greetings.tmpl >$(2).txt
 endef
