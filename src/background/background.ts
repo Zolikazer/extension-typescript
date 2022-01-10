@@ -110,6 +110,7 @@ async function main() {
     const background = new Background(arrowexTimer, chromeApi, premiumManager);
 
     background.listenToMessages();
+    await sleep(ONE_SECOND_IN_MILLISECONDS);
     await premiumManager.init();
     await background.checkLicense();
 }

@@ -199,8 +199,11 @@ class PopupEventHandler {
         const resetButton = document.getElementById("reset-btn");
         resetButton.addEventListener("click", async () => {
             console.log("clicked")
-            await this.arrowexTimer.resetTimer();
-            clearInterval();
+            const confirmed = confirm("Are you sure to reset timer?");
+            if (confirmed) {
+                await this.arrowexTimer.resetTimer();
+                clearInterval();
+            }
         })
 
     }
