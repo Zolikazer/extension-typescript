@@ -1,9 +1,8 @@
-import {ArrowexTimer} from "../../../src/model/ArrowexTimer";
-import {instance, mock, when} from "ts-mockito";
-import {ChromeAPI} from "../../../src/chrome/ChromeAPI";
-import {PopupElementBuilder} from "../../../src/view/popup/popup";
-import {ArrowexTimerSettings} from "../../../src/model/ArrowexTimerSettings";
-import {getLicense} from "../../../src/adapters/adapters";
+import { ArrowexTimer } from "../../../src/model/ArrowexTimer";
+import { instance, mock, when } from "ts-mockito";
+import { ChromeAPI } from "../../../src/chrome/ChromeAPI";
+import { PopupElementBuilder } from "../../../src/view/popup/popup";
+import { ArrowexTimerSettings } from "../../../src/model/ArrowexTimerSettings";
 
 
 describe('PopupElementBuilder', function () {

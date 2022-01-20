@@ -1,14 +1,15 @@
-import {EwoqHomePage, InstructionPage, OtherPage, PageFactory, RatingPage} from "../../../src/content/page";
-import {DomInspector} from "../../../src/content/DomInspector";
-import {anything, instance, mock, reset, verify, when} from "ts-mockito";
-import {ChromeAPI} from "../../../src/chrome/ChromeAPI";
-import {InstructionTimer} from "../../../src/content/InstructionTimer";
-import {ArrowexTimer} from "../../../src/model/ArrowexTimer";
-import {DatetimeUtils, ONE_SECOND_IN_MILLISECONDS} from "../../../src/datetime/datetimeUtils";
-import {ArrowexTimerSettings} from "../../../src/model/ArrowexTimerSettings";
-import {NtaReminder} from "../../../src/content/NtaReminder";
+import { EwoqHomePage, InstructionPage, OtherPage, PageFactory, RatingPage } from "../../../src/content/page";
+import { DomInspector } from "../../../src/content/DomInspector";
+import { anything, instance, mock, reset, verify, when } from "ts-mockito";
+import { ChromeAPI } from "../../../src/chrome/ChromeAPI";
+import { InstructionTimer } from "../../../src/content/InstructionTimer";
+import { ArrowexTimer } from "../../../src/model/ArrowexTimer";
+import { DatetimeUtils, ONE_SECOND_IN_MILLISECONDS } from "../../../src/datetime/datetimeUtils";
+import { ArrowexTimerSettings } from "../../../src/model/ArrowexTimerSettings";
+import { NtaReminder } from "../../../src/content/NtaReminder";
+import { TaskChecker } from "../../../src/content/TaskChecker";
 
-describe('Page', function () {
+describe("Page", function() {
     const chromeApiMock = mock(ChromeAPI);
     const chromeApi = instance(chromeApiMock);
 
@@ -20,22 +21,22 @@ describe('Page', function () {
     const getSubmitButtonMock = jest.spyOn(DomInspector, "getSubmitButton");
     const getAcquireTaskButtonMock = jest.spyOn(DomInspector, "getAcquireTaskButton");
 
-    it('page factory should return InstructionPage', function () {
+    it("page factory should return InstructionPage", function() {
         // @ts-ignore
-        getContinueButtonMock.mockReturnValue("not undefined")
+        getContinueButtonMock.mockReturnValue("not undefined");
         expect(pageFactory.getPage()).toBeInstanceOf(InstructionPage);
 
     });
 
-    it('page factory should return RatingPage', function () {
-        getContinueButtonMock.mockReturnValue(undefined)
+    it("page factory should return RatingPage", function() {
+        getContinueButtonMock.mockReturnValue(undefined);
         // @ts-ignore
         getSubmitButtonMock.mockReturnValue("not null");
-        expect(pageFactory.getPage()).toBeInstanceOf(RatingPage)
+        expect(pageFactory.getPage()).toBeInstanceOf(RatingPage);
 
     });
 
-    it('page factory should return OtherPage', function () {
+    it("page factory should return OtherPage", function() {
         getContinueButtonMock.mockReturnValue(undefined);
         getSubmitButtonMock.mockReturnValue(null);
         getAcquireTaskButtonMock.mockReturnValue(null);
@@ -43,7 +44,7 @@ describe('Page', function () {
 
     });
 
-    it('page factory should return EwoqHomePage', function () {
+    it("page factory should return EwoqHomePage", function() {
         getContinueButtonMock.mockReturnValue(undefined);
         getSubmitButtonMock.mockReturnValue(null);
         // @ts-ignore
@@ -57,7 +58,7 @@ describe('Page', function () {
 });
 
 
-describe('InstructionPage', function () {
+describe("InstructionPage", function() {
     const instructionTimerMock = mock(InstructionTimer);
     const instructionTimer = instance(instructionTimerMock);
 
@@ -68,23 +69,23 @@ describe('InstructionPage', function () {
     const arrowexTimer = instance(arrowexTimerMock);
 
 
-    it('InstructionPage should stop the timer and add instruction timer', function () {
-        when(arrowexTimerMock.stopTimer()).thenReturn()
+    it("InstructionPage should stop the timer and add instruction timer", function() {
+        when(arrowexTimerMock.stopTimer()).thenReturn();
         when(arrowexTimerMock.isCounting).thenReturn(true);
 
         const instructionPage = new InstructionPage(instructionTimer, arrowexTimer);
 
         instructionPage.adjustTimer();
-        verify(arrowexTimerMock.stopTimer()).called()
+        verify(arrowexTimerMock.stopTimer()).called();
 
     });
 
-    it('InstructionPage should add instruction timer', function () {
+    it("InstructionPage should add instruction timer", function() {
         const instructionPage = new InstructionPage(instructionTimer, arrowexTimer);
-        when(instructionTimerMock.addTimerToInstruction()).thenReturn()
+        when(instructionTimerMock.addTimerToInstruction()).thenReturn();
 
         instructionPage.doOtherStuff();
-        verify(instructionTimerMock.addTimerToInstruction()).called()
+        verify(instructionTimerMock.addTimerToInstruction()).called();
 
 
     });
@@ -92,7 +93,7 @@ describe('InstructionPage', function () {
 });
 
 
-describe('RatingPage', function () {
+describe("RatingPage", function() {
     const arrowexTimerMock = mock(ArrowexTimer);
     const arrowexTimer = instance(arrowexTimerMock);
 
@@ -110,9 +111,9 @@ describe('RatingPage', function () {
 
     afterEach(() => {
         reset(chromeApiMock);
-    })
+    });
 
-    it('should start the timer', function () {
+    it("should start the timer", function() {
         const ratingPage = new RatingPage(arrowexTimer, chromeApi);
         when(arrowexTimerMock.startTimer()).thenReturn();
 
@@ -122,7 +123,7 @@ describe('RatingPage', function () {
 
     });
 
-    it('should warn to submit', function () {
+    it("should warn to submit", function() {
         when(arrowexTimerSettingsMock.submitTime).thenReturn(0);
         when(arrowexTimerMock.lastSubmit).thenReturn(0);
         when(arrowexTimerSettingsMock.submitTimeEnabled).thenReturn(true);
@@ -136,7 +137,7 @@ describe('RatingPage', function () {
 
     });
 
-    it('should not warn to submit if submit time is not enabled', function () {
+    it("should not warn to submit if submit time is not enabled", function() {
         when(arrowexTimerSettingsMock.submitTime).thenReturn(0);
         when(arrowexTimerMock.lastSubmit).thenReturn(0);
         when(arrowexTimerSettingsMock.submitTimeEnabled).thenReturn(false);
@@ -150,7 +151,7 @@ describe('RatingPage', function () {
 
     });
 
-    it('should not warn to submit if submit time is not expired', function () {
+    it("should not warn to submit if submit time is not expired", function() {
         when(arrowexTimerSettingsMock.submitTime).thenReturn(30);
         when(arrowexTimerMock.lastSubmit).thenReturn(0);
         when(arrowexTimerSettingsMock.submitTimeEnabled).thenReturn(true);
@@ -165,16 +166,19 @@ describe('RatingPage', function () {
     });
 });
 
-describe('EwoqHomepage', function () {
+describe("EwoqHomepage", function() {
     const arrowexTimerMock = mock(ArrowexTimer);
     const arrowexTimer = instance(arrowexTimerMock);
 
     const ntaReminderMock = mock(NtaReminder);
     const ntaReminder = instance(ntaReminderMock);
 
+    const taskCheckerMock = mock(TaskChecker);
+    const taskChecker = instance(taskCheckerMock);
 
-    it('should stop the timer', async function () {
-        const ewoqHomepage = new EwoqHomePage(arrowexTimer, ntaReminder);
+
+    it("should stop the timer", async function() {
+        const ewoqHomepage = new EwoqHomePage(arrowexTimer, ntaReminder, taskChecker);
         when(arrowexTimerMock.isCounting).thenReturn(true);
 
         await ewoqHomepage.adjustTimer();
@@ -183,19 +187,30 @@ describe('EwoqHomepage', function () {
 
     });
 
+    it("should do other stuff", async function() {
+        const ewoqHomepage = new EwoqHomePage(arrowexTimer, ntaReminder, taskChecker);
+        when(arrowexTimerMock.isCounting).thenReturn(true);
+
+        await ewoqHomepage.doOtherStuff();
+        verify(taskCheckerMock.checkForTasks()).called();
+        verify(taskCheckerMock.refreshPageAfter(anything())).called()
+
+
+    });
+
 });
 
 
-describe('Other page', function () {
+describe("Other page", function() {
     const arrowexTimerMock = mock(ArrowexTimer);
     const arrowexTimer = instance(arrowexTimerMock);
 
-    it('should stop the timer', function () {
+    it("should stop the timer", function() {
         const otherPage = new OtherPage(arrowexTimer);
         when(arrowexTimerMock.isCounting).thenReturn(true);
 
         otherPage.adjustTimer();
 
-        verify(arrowexTimerMock.stopTimer()).called()
+        verify(arrowexTimerMock.stopTimer()).called();
     });
 });

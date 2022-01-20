@@ -1,12 +1,12 @@
-import {ChromeStorage} from "../chrome/ChromeStorage";
-import {Observable} from "./Observable";
-import {ArrowexTimerSettings} from "./ArrowexTimerSettings";
-import {DatetimeUtils} from "../datetime/datetimeUtils";
+import { ChromeStorage } from "../chrome/ChromeStorage";
+import { Observable } from "./Observable";
+import { ArrowexTimerSettings } from "./ArrowexTimerSettings";
+import { DatetimeUtils } from "../datetime/datetimeUtils";
 
 export class ArrowexTimer extends Observable {
-    private CHANGED = "changed"
+    private CHANGED = "changed";
     private _taskCount: number;
-    private _lastSubmit: number
+    private _lastSubmit: number;
     private _currentTaskName: string;
     private _startTime: number;
     private _stopTime: number;
@@ -41,7 +41,7 @@ export class ArrowexTimer extends Observable {
         this._lastSubmit = data.lastSubmit;
         this._settings.updateStateWith(data.settings);
         this._worksheet = data.worksheet;
-        this.notify(this.CHANGED)
+        this.notify(this.CHANGED);
 
     }
 
@@ -68,12 +68,12 @@ export class ArrowexTimer extends Observable {
             workedSeconds: workedSeconds,
             stopTime: stopTime,
             isCounting: false
-        })
+        });
     }
 
     async resetTimer(): Promise<void> {
         if (this._lastSubmit !== null) {
-            this.updateWorksheet();
+            // this.updateWorksheet();
 
             await this.storage.set({
                 taskCount: 0,
@@ -83,8 +83,7 @@ export class ArrowexTimer extends Observable {
                 isCounting: false,
                 currentTaskName: null,
                 tasks: {},
-                lastSubmit: null,
-                worksheet: this._worksheet
+                lastSubmit: null
             });
         }
     }
@@ -97,12 +96,15 @@ export class ArrowexTimer extends Observable {
         this._lastSubmit = currentTime;
         this.updateTasks(taskName, timeToComplete);
 
+        this.updateWorksheet();
+
         await this.storage.set({
             taskCount: this._taskCount,
             currentTaskName: taskName,
             tasks: this._tasks,
-            lastSubmit: currentTime
-        })
+            lastSubmit: currentTime,
+            worksheet: this._worksheet
+        });
 
     }
 
@@ -121,23 +123,13 @@ export class ArrowexTimer extends Observable {
     }
 
     private updateWorksheet = () => {
-        const workday = DatetimeUtils.getYYYYMMDDString(new Date(this._lastSubmit));
+        const currentDate = new Date(DatetimeUtils.getCurrentTimeInPst());
+        const workday = DatetimeUtils.getYYYYMMDDString(currentDate);
         this._worksheet[workday] = {
             workedSeconds: this.workedSeconds,
-            taskCount: this._taskCount,
-        }
-    }
-
-    getLastDayFromWorksheet(): { [index: string]: any } {
-        const dates = Object.keys(this.worksheet);
-        dates.sort();
-        const lastDayDate = dates.pop();
-        const lastDayData = this.worksheet[lastDayDate];
-        lastDayData["date"] = lastDayDate;
-
-        return lastDayData
-
-    }
+            taskCount: this._taskCount
+        };
+    };
 
     onChange(callback: (ev: Event) => void): void {
         this.addEventListener(this.CHANGED, callback);

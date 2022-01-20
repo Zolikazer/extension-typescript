@@ -2,36 +2,37 @@
 // All rights reserved.
 // Email: okoskacsaka@gmail.com
 
-import {ArrowexTimer} from "../model/ArrowexTimer";
-import {ChromeAPI} from "../chrome/ChromeAPI";
-import {BEEP, EWOQ_OPENED, NTA} from "../common/messages";
-import {ChromeStorage} from "../chrome/ChromeStorage";
-import {ONE_SECOND_IN_MILLISECONDS} from "../datetime/datetimeUtils";
-import {getLicense} from "../adapters/adapters";
-import {PremiumManager} from "../model/Premium";
-import {sleep} from "../common/utils";
+import { ArrowexTimer } from "../model/ArrowexTimer";
+import { ChromeAPI } from "../chrome/ChromeAPI";
+import { BEEP, EWOQ_OPENED, NTA, TASK_DETECTED } from "../common/messages";
+import { ChromeStorage } from "../chrome/ChromeStorage";
+import { DatetimeUtils, ONE_MINUTE_IN_SECONDS, ONE_SECOND_IN_MILLISECONDS } from "../datetime/datetimeUtils";
+import { getLicense } from "../adapters/adapters";
+import { PremiumManager } from "../model/Premium";
+import { sleep } from "../common/utils";
 
 export class Background {
     private readonly arrowexTimer: ArrowexTimer;
     private readonly chromeApi: ChromeAPI;
     private readonly premiumManager: PremiumManager;
-    private timerInitialized: boolean
+    private timerInitialized: boolean;
+    private lastTaskAvailableNotification: number;
 
     constructor(arrowexTimer: ArrowexTimer, chromeApi: ChromeAPI, premiumManager: PremiumManager) {
         this.arrowexTimer = arrowexTimer;
         this.chromeApi = chromeApi;
         this.premiumManager = premiumManager;
         this.timerInitialized = false;
+        this.lastTaskAvailableNotification = DatetimeUtils.getCurrentTimeInPst();
     }
 
     listenToMessages() {
         this.chromeApi.onMessage(async (request) => {
-            await this.handleMessage(request)
-        })
+            await this.handleMessage(request);
+        });
     }
 
     async handleMessage(request: { [index: string]: any }) {
-        console.log(request)
         switch (request.msg) {
             case BEEP:
                 await beep();
@@ -47,6 +48,15 @@ export class Background {
 
             case NTA:
                 this.createNtaReportNotification();
+                break;
+            case TASK_DETECTED:
+                const currentTime = DatetimeUtils.getCurrentTimeInPst();
+                if (currentTime - this.lastTaskAvailableNotification >
+                  3 * ONE_MINUTE_IN_SECONDS * ONE_SECOND_IN_MILLISECONDS) {
+                    this.lastTaskAvailableNotification = currentTime;
+                    this.createTaskAvaliableNotification();
+                    await beep();
+                }
         }
 
     }
@@ -56,14 +66,13 @@ export class Background {
         // noinspection JSUnresolvedVariable
         let checkForTabClose = true;
         while (checkForTabClose) {
-            console.log("Check for tab close")
             this.chromeApi.queryTabs({}, async (tabs) => {
                 if (!this.isEwoqOpened(tabs)) {
                     await this.arrowexTimer.stopTimer();
                     checkForTabClose = false;
                 }
 
-            })
+            });
             await sleep(1000);
         }
     }
@@ -78,12 +87,20 @@ export class Background {
     }
 
     createNtaReportNotification() {
-        console.log("report nta")
         this.chromeApi.createNotification("",
-            "Report NTA",
-            "Do not forget to report NTA!",
-            "basic",
-            "../images/arrow_16.png"
+          "Report NTA",
+          "Do not forget to report NTA!",
+          "basic",
+          "../images/arrow_16.png"
+        );
+    }
+
+    createTaskAvaliableNotification() {
+        this.chromeApi.createNotification("",
+          "TASK IS AVAILABLE",
+          "TASK IS AVAILABLE",
+          "basic",
+          "../images/task_avaliable.png"
         );
     }
 

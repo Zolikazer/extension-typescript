@@ -32,7 +32,6 @@ build: clean
 	npx rollup dist/src/view/worksheet/worksheet.js --file build/view/worksheet/worksheet.bundle.js --validate
 	npx rollup dist/src/view/premium/premium.view.js --file build/view/premium/premium.bundle.js --validate
 
-#	npx browserify -p esmify dist/src/view/premium/premium.js -o build/view/premium/premium.bundle.js --standalone dsfds
 
 	mkdir extension
 	cd build/; 	zip -r ../extension/extension_to_e2e.zip .

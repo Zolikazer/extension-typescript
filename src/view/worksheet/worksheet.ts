@@ -1,9 +1,9 @@
-import {ArrowexTimer} from "../../model/ArrowexTimer";
-import {DatetimeUtils} from "../../datetime/datetimeUtils";
-import {calculateRph, getWorkedTimeString} from "../../common/utils";
-import {ChromeStorage} from "../../chrome/ChromeStorage";
+import { ArrowexTimer } from "../../model/ArrowexTimer";
+import { DatetimeUtils } from "../../datetime/datetimeUtils";
+import { calculateRph, getWorkedTimeString } from "../../common/utils";
+import { ChromeStorage } from "../../chrome/ChromeStorage";
 
-class Worksheet {
+export class Worksheet {
     private readonly arrowexTimer: ArrowexTimer;
 
     constructor(arrowexTimer: ArrowexTimer) {
@@ -20,10 +20,10 @@ class Worksheet {
 
     renderYesterdayStat() {
         const yesterdayStatContainer = document.getElementById("last-day-stat");
-        const lastWorkedDayStat = this.arrowexTimer.getLastDayFromWorksheet();
+        const lastWorkedDayStat = this.getLastWorkedDayThatIsNotToday();
 
         yesterdayStatContainer.innerHTML = this.getRenderedStat(lastWorkedDayStat.date, lastWorkedDayStat.taskCount,
-            lastWorkedDayStat.workedSeconds);
+          lastWorkedDayStat.workedSeconds);
 
     }
 
@@ -61,10 +61,26 @@ class Worksheet {
         return `<p id="date" class="font-bold">${date}</p>
         <p>Tasks: ${taskCount}</p>
         <p>Time: ${workedTime}</p>
-        <p>RPH: ${rph} (s)</p>`
+        <p>RPH: ${rph} (s)</p>`;
     }
 
 
+    getLastWorkedDayThatIsNotToday() {
+        const currentDateInPst = new Date(DatetimeUtils.getCurrentTimeInPst());
+        const currentDateString = DatetimeUtils.getYYYYMMDDString(currentDateInPst);
+
+        const dates = Object.keys(this.arrowexTimer.worksheet);
+        dates.sort();
+        let lastDayDate = dates[dates.length - 1];
+        if (currentDateString === lastDayDate) {
+            lastDayDate = dates[dates.length - 2];
+        }
+        const lastDayData = this.arrowexTimer.worksheet[lastDayDate];
+        lastDayData["date"] = lastDayDate;
+
+        return lastDayData;
+
+    }
 }
 
 async function main() {
@@ -77,4 +93,4 @@ async function main() {
     worksheet.render();
 }
 
-main()
+main();

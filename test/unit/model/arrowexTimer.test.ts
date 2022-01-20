@@ -88,9 +88,7 @@ describe('ArrowexTimer', function () {
 
     it('should set proper fields when reset timer is called', async function () {
         jest.spyOn(storage, "set");
-        const time = 10000;
         storage.setStorageTo(deepcopy(testDataCounting));
-        const expectedWorksheet = {"1970-01-01": {workedSeconds: 20, taskCount: 3}}
 
         await arrowexTimer.init()
 
@@ -103,8 +101,7 @@ describe('ArrowexTimer', function () {
             "isCounting": false,
             "currentTaskName": null,
             "tasks": {},
-            "lastSubmit": null,
-            "worksheet": expectedWorksheet
+            "lastSubmit": null
         })
 
     });
@@ -133,22 +130,15 @@ describe('ArrowexTimer', function () {
             "taskCount": 4,
             "currentTaskName": "TestName",
             "tasks": {TestName: {taskCount: 4, time: 20000}},
-            "lastSubmit": time
+            "lastSubmit": time,
+            "worksheet":  {
+            "1970-01-01":  {
+                "taskCount": 4,
+                  "workedSeconds": 40}},
         })
 
     });
 
-    it('should return the proper last day from the worksheet', async function () {
-        storage.setStorageTo(testWorksheetData);
-        await arrowexTimer.init();
-
-        expect(arrowexTimer.getLastDayFromWorksheet()).toStrictEqual({
-            "date": "2021-01-01",
-            workedSeconds: 5,
-            taskCount: 6
-        })
-
-    });
     it('should return the current task data', async function () {
         storage.setStorageTo(deepcopy(testDataCounting));
         await arrowexTimer.init();

@@ -3,3 +3,4 @@ export const BEEP = "beep";
 export const TIMER_STOPPED = "timer_stopped";
 export const NTA = "NTA";
 export const PREMIUM_ACTIVATED = "premium_activated";
+export const TASK_DETECTED = "task_detected";

@@ -1,15 +1,16 @@
-import {InstructionTimer} from "./InstructionTimer";
-import {ChromeAPI} from "../chrome/ChromeAPI";
-import {ArrowexTimer} from "../model/ArrowexTimer";
-import {DatetimeUtils, ONE_SECOND_IN_MILLISECONDS} from "../datetime/datetimeUtils";
-import {BEEP} from "../common/messages";
-import {NtaReminder} from "./NtaReminder";
-import {DomInspector} from "./DomInspector";
+import { InstructionTimer } from "./InstructionTimer";
+import { ChromeAPI } from "../chrome/ChromeAPI";
+import { ArrowexTimer } from "../model/ArrowexTimer";
+import { DatetimeUtils, ONE_SECOND_IN_MILLISECONDS } from "../datetime/datetimeUtils";
+import { BEEP } from "../common/messages";
+import { NtaReminder } from "./NtaReminder";
+import { DomInspector } from "./DomInspector";
+import { TaskChecker } from "./TaskChecker";
 
 export interface Page {
     arrowexTimer: ArrowexTimer;
 
-    doOtherStuff(): void
+    doOtherStuff(): void;
 
     adjustTimer(): Promise<void>;
 
@@ -74,43 +75,46 @@ export class RatingPage extends EwoqPage {
     }
 
     private warnToSubmit = () => {
-        console.log("warn to submit...")
+        console.log("warn to submit...");
         let submitWarnTimeout = setTimeout(this.warnToSubmit, ONE_SECOND_IN_MILLISECONDS);
 
         const currentTime = DatetimeUtils.getCurrentTimeInPst();
         if (this.shouldWarnToSubmit(currentTime)) {
-            this.chromeApi.sendMessage({msg: BEEP});
+            this.chromeApi.sendMessage({ msg: BEEP });
             this.lastBeep = currentTime;
         }
 
         if (!this.arrowexTimer.isCounting) {
-            console.log("cleared")
+            console.log("cleared");
             clearTimeout(submitWarnTimeout);
         }
 
-    }
+    };
 
     private shouldWarnToSubmit(currentTime: number) {
         const submitTimeExpired = currentTime - this.arrowexTimer.lastSubmit >
-            this.arrowexTimer.settings.submitTime * ONE_SECOND_IN_MILLISECONDS;
+          this.arrowexTimer.settings.submitTime * ONE_SECOND_IN_MILLISECONDS;
         const lastBeepExpirationInterval = 10 * ONE_SECOND_IN_MILLISECONDS;
 
 
         return submitTimeExpired
-            && this.arrowexTimer.settings.submitTimeEnabled
-            && currentTime - this.lastBeep > lastBeepExpirationInterval;
+          && this.arrowexTimer.settings.submitTimeEnabled
+          && currentTime - this.lastBeep > lastBeepExpirationInterval;
     }
 
 }
 
 export class EwoqHomePage extends EwoqPage {
-    private readonly ntaReminder: NtaReminder
-    private lastReminder: number
+    private static MIN_REFRESH_TIMEOUT = 10;
+    private readonly ntaReminder: NtaReminder;
+    private lastReminder: number;
+    private taskChecker: TaskChecker;
 
-    constructor(arrowexTimer: ArrowexTimer, ntaReminder: NtaReminder) {
+    constructor(arrowexTimer: ArrowexTimer, ntaReminder: NtaReminder, taskChecker: TaskChecker) {
         super(arrowexTimer);
         this.ntaReminder = ntaReminder;
         this.lastReminder = null;
+        this.taskChecker = taskChecker;
 
     }
 
@@ -120,7 +124,9 @@ export class EwoqHomePage extends EwoqPage {
                 this.ntaReminder.notifyAboutNtaReporting();
                 this.lastReminder = DatetimeUtils.getCurrentTimeInPst();
             }
-        }, 5000)
+        }, 5000);
+        this.taskChecker.checkForTasks();
+        this.taskChecker.refreshPageAfter(EwoqHomePage.MIN_REFRESH_TIMEOUT + Math.random() * 7);
     }
 
     private reminderExpired() {
@@ -167,12 +173,14 @@ export class PageFactory {
                 arrowexTimer: ArrowexTimer) {
 
         this.instructionPage = new InstructionPage(
-            new InstructionTimer(
-                arrowexTimer.settings,
-                chromeApi),
-            arrowexTimer);
+          new InstructionTimer(
+            arrowexTimer.settings,
+            chromeApi),
+          arrowexTimer);
         this.ratingPage = new RatingPage(arrowexTimer, chromeApi);
-        this.ewoqHomepage = new EwoqHomePage(arrowexTimer, new NtaReminder(chromeApi));
+        this.ewoqHomepage = new EwoqHomePage(arrowexTimer,
+          new NtaReminder(chromeApi),
+          new TaskChecker(chromeApi));
         this.otherPage = new OtherPage(arrowexTimer);
 
     }
