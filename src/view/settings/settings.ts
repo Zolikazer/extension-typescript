@@ -31,10 +31,6 @@ class SettingsDisplay {
 
     render(): void {
         this.renderSupportedCurrencies();
-
-        // @ts-ignore
-        WARN_SUBMIT_CHECKBOX.checked = this.arrowexTimerSettings.warnIfForgotToStart;
-
         // @ts-ignore
         PAYRATE_INPUT.value = this.arrowexTimerSettings.moneyEarned.payrate;
 
@@ -93,9 +89,6 @@ class SettingsDisplay {
 
     async saveSettings() {
         SAVE_STATUS.textContent = "Saving settings...";
-
-        // @ts-ignore
-        this.arrowexTimerSettings.warnIfForgotToStart = WARN_SUBMIT_CHECKBOX.checked;
         // @ts-ignore
         this.arrowexTimerSettings.submitTime = parseInt(SUBMIT_TIME.value);
         // @ts-ignore

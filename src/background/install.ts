@@ -12,7 +12,6 @@ chrome.runtime.onInstalled.addListener((details) => {
             tasks: {},
             lastSubmit: null,
             settings: {
-                warnIfForgotToStart: true,
                 moneyEarned: {payrate: 0, currency: "USD", conversionRate: null},
                 submitTimeEnabled: true,
                 submitTime: 45,
