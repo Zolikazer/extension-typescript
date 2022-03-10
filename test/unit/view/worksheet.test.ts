@@ -2,11 +2,13 @@ import { Worksheet } from "../../../src/view/worksheet/worksheet";
 import { instance, mock, when } from "ts-mockito";
 import { ArrowexTimer } from "../../../src/model/ArrowexTimer";
 import { DatetimeUtils } from "../../../src/datetime/datetimeUtils";
+import { ChromeAPI } from "../../../src/chrome/ChromeAPI";
 
 describe("Worksheet", function() {
     const arrowexTimerMock = mock(ArrowexTimer);
     const arrowexTimer = instance(arrowexTimerMock);
-    const worksheet = new Worksheet(arrowexTimer);
+    const chromeApi = instance(mock(ChromeAPI));
+    const worksheet = new Worksheet(arrowexTimer, chromeApi);
     const datetimeUtilsMock = jest.spyOn(DatetimeUtils, "getCurrentTimeInPst");
 
 

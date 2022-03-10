@@ -73,6 +73,7 @@ export class PremiumManager extends Observable {
         try {
             await verified; // throws on invalid signature
         } catch (e) {
+            // @ts-ignore
             throw new Error('Signature could not be verified: ' + e.message);
         }
 

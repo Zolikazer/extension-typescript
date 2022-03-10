@@ -83,6 +83,7 @@ export class PremiumView {
                 this.render();
 
             } catch (error) {
+                // @ts-ignore
                 this.errorElement.innerText = error.message;
             }
         })

@@ -47,5 +47,10 @@ export class ChromeAPI {
         });
         console.log("notifcation created?")
     }
+
+    createTab(url: string) {
+        // @ts-ignore
+        chrome.tabs.create({url: `chrome-extension://${chrome.runtime.id}/${url}`});
+    }
 }
 

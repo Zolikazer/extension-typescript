@@ -2,18 +2,24 @@ import { ArrowexTimer } from "../../model/ArrowexTimer";
 import { DatetimeUtils } from "../../datetime/datetimeUtils";
 import { calculateRph, getWorkedTimeString } from "../../common/utils";
 import { ChromeStorage } from "../../chrome/ChromeStorage";
+import { ChromeAPI } from "../../chrome/ChromeAPI";
 
 export class Worksheet {
     private readonly arrowexTimer: ArrowexTimer;
+    private readonly chromeApi: ChromeAPI;
 
-    constructor(arrowexTimer: ArrowexTimer) {
+    constructor(arrowexTimer: ArrowexTimer, chromeApi: ChromeAPI) {
         this.arrowexTimer = arrowexTimer;
+        this.chromeApi = chromeApi;
     }
 
     render() {
         if (this.arrowexTimer.worksheet !== {}) {
             this.renderYesterdayStat();
             this.renderThisMonthStat();
+            this.handleButtonClick();
+        } else {
+            this.hideFullWorksheetButton();
         }
     }
 
@@ -81,12 +87,23 @@ export class Worksheet {
         return lastDayData;
 
     }
+
+    private hideFullWorksheetButton() {
+        document.getElementById("worksheet-btn").style.display = "none";
+
+    }
+
+    private handleButtonClick() {
+        const button = document.getElementById("worksheet-btn");
+        button.addEventListener("click", () => this.chromeApi.createTab("view/worksheet/full_worksheet.html"));
+    }
 }
 
 async function main() {
     const chromeStorage = new ChromeStorage();
     const arrowexTimer = new ArrowexTimer(chromeStorage);
-    const worksheet = new Worksheet(arrowexTimer);
+    const chromeApi = new ChromeAPI();
+    const worksheet = new Worksheet(arrowexTimer, chromeApi);
 
     await arrowexTimer.init();
 

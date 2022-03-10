@@ -30,8 +30,8 @@ build: clean
 	npx rollup dist/src/view/settings/settings.js --file build/view/settings/settings.bundle.js --validate
 	npx rollup dist/src/view/tasks/tasks.js --file build/view/tasks/tasks.bundle.js --validate
 	npx rollup dist/src/view/worksheet/worksheet.js --file build/view/worksheet/worksheet.bundle.js --validate
+	npx rollup dist/src/view/worksheet/full_worksheet.js --file build/view/worksheet/full_worksheet.bundle.js --validate
 	npx rollup dist/src/view/premium/premium.view.js --file build/view/premium/premium.bundle.js --validate
-
 
 	mkdir extension
 	cd build/; 	zip -r ../extension/extension_to_e2e.zip .
