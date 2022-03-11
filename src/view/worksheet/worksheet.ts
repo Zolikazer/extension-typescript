@@ -14,7 +14,7 @@ export class Worksheet {
     }
 
     render() {
-        if (this.arrowexTimer.worksheet !== {}) {
+        if (this.arrowexTimer.currentMonthWorksheet !== {}) {
             this.renderYesterdayStat();
             this.renderThisMonthStat();
             this.handleButtonClick();
@@ -37,7 +37,7 @@ export class Worksheet {
         const currentDateInPst = new Date(DatetimeUtils.getCurrentTimeInPst());
         const currentYearAndMonth = DatetimeUtils.getYYYYMMString(currentDateInPst);
 
-        const [taskCount, workedSeconds] = this.collectMonthTaskCountAndWorkedSeconds(this.arrowexTimer.worksheet, currentYearAndMonth);
+        const [taskCount, workedSeconds] = this.collectMonthTaskCountAndWorkedSeconds(this.arrowexTimer.currentMonthWorksheet, currentYearAndMonth);
 
         const thisMonthStatDom = document.getElementById("monthly-stat");
         thisMonthStatDom.innerHTML = this.getRenderedStat(currentYearAndMonth, taskCount, workedSeconds);
@@ -75,13 +75,13 @@ export class Worksheet {
         const currentDateInPst = new Date(DatetimeUtils.getCurrentTimeInPst());
         const currentDateString = DatetimeUtils.getYYYYMMDDString(currentDateInPst);
 
-        const dates = Object.keys(this.arrowexTimer.worksheet);
+        const dates = Object.keys(this.arrowexTimer.currentMonthWorksheet);
         dates.sort();
         let lastDayDate = dates[dates.length - 1];
         if (currentDateString === lastDayDate) {
             lastDayDate = dates[dates.length - 2];
         }
-        const lastDayData = this.arrowexTimer.worksheet[lastDayDate];
+        const lastDayData = this.arrowexTimer.currentMonthWorksheet[lastDayDate];
         lastDayData["date"] = lastDayDate;
 
         return lastDayData;

@@ -14,7 +14,7 @@ describe("Worksheet", function() {
 
     test("getLastWorkedDayThatIsNotToday should return previous day's data", function() {
         datetimeUtilsMock.mockReturnValue(new Date("2022-01-11").getTime());
-        when(arrowexTimerMock.worksheet).thenReturn({
+        when(arrowexTimerMock.currentMonthWorksheet).thenReturn({
             "2022-01-09": {
                 "taskCount": 12,
                 "workedSeconds": 577.962
@@ -38,7 +38,7 @@ describe("Worksheet", function() {
 
     test("getLastWorkedDayThatIsNotToday should return last worked day's data", function() {
         datetimeUtilsMock.mockReturnValue(new Date("2022-01-12").getTime());
-        when(arrowexTimerMock.worksheet).thenReturn({
+        when(arrowexTimerMock.currentMonthWorksheet).thenReturn({
             "2022-01-09": {
                 "taskCount": 12,
                 "workedSeconds": 577.962

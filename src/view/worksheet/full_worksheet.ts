@@ -13,7 +13,7 @@ class FullWorksheet {
     public render() {
         const worksheetTable = document.getElementById("worksheet-table");
 
-        let tableContent = "<tr>\<th>Date</th><th>Worked time</th><th>Task count</th><th>RPH</th></tr>";
+        let tableContent: string = "<tr>\<th>Date</th><th>Worked time</th><th>Task count</th><th>RPH</th></tr>";
         for (const [date, data] of Object.entries(this.arrowexTimer.worksheet).reverse()) {
             tableContent += this.buildRowFromData(date, data);
         }

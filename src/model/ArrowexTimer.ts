@@ -13,9 +13,9 @@ export class ArrowexTimer extends Observable {
     private _workedSeconds: number;
     private _isCounting: boolean;
     private _tasks: { [index: string]: any };
+    private _currentMonthWorksheet: { [index: string]: any };
     private _worksheet: { [index: string]: any };
     private readonly _settings: ArrowexTimerSettings;
-
     private readonly storage: ChromeStorage;
 
     constructor(storage: ChromeStorage) {
@@ -29,6 +29,10 @@ export class ArrowexTimer extends Observable {
         await this.updateState();
     }
 
+    onChange(callback: (ev: Event) => void): void {
+        this.addEventListener(this.CHANGED, callback);
+    }
+
     private async updateState(): Promise<void> {
         const data = await this.storage.get(null);
         this._taskCount = data.taskCount;
@@ -40,7 +44,8 @@ export class ArrowexTimer extends Observable {
         this._tasks = data.tasks;
         this._lastSubmit = data.lastSubmit;
         this._settings.updateStateWith(data.settings);
-        this._worksheet = data.worksheet;
+        this._currentMonthWorksheet = this.getCurrentMonthWorksheet(data);
+        this._worksheet = await this.getAggregatedWorksheet(data);
         this.notify(this.CHANGED);
 
     }
@@ -98,13 +103,15 @@ export class ArrowexTimer extends Observable {
 
         this.updateWorksheet();
 
-        await this.storage.set({
+        let countData: any = {
             taskCount: this._taskCount,
             currentTaskName: taskName,
             tasks: this._tasks,
-            lastSubmit: currentTime,
-            worksheet: this._worksheet
-        });
+            lastSubmit: currentTime
+        };
+        countData[`worksheet-${DatetimeUtils.getYYYYMMString(new Date(currentTime))}`] = this._currentMonthWorksheet;
+
+        await this.storage.set(countData);
 
     }
 
@@ -125,14 +132,21 @@ export class ArrowexTimer extends Observable {
     private updateWorksheet = () => {
         const currentDate = new Date(DatetimeUtils.getCurrentTimeInPst());
         const workday = DatetimeUtils.getYYYYMMDDString(currentDate);
-        this._worksheet[workday] = {
+        this._currentMonthWorksheet[workday] = {
             workedSeconds: this.workedSeconds,
             taskCount: this._taskCount
         };
     };
 
-    onChange(callback: (ev: Event) => void): void {
-        this.addEventListener(this.CHANGED, callback);
+    private async getAggregatedWorksheet(data: { [p: string]: any }): Promise<{ [p: string]: any }> {
+        let aggregatedWorksheet = {};
+        const worksheetMonths = Object.keys(data).filter(key => key.includes("worksheet-"));
+
+        for (const worksheetMonth of worksheetMonths) {
+            Object.assign(aggregatedWorksheet, data[worksheetMonth]);
+
+        }
+        return aggregatedWorksheet;
     }
 
 
@@ -177,13 +191,20 @@ export class ArrowexTimer extends Observable {
         return this._settings;
     }
 
-    get worksheet(): { [p: string]: any } {
-        return this._worksheet;
+    get currentMonthWorksheet(): { [p: string]: any } {
+        return this._currentMonthWorksheet;
     }
 
     get currentTaskData() {
         return this._tasks[this._currentTaskName];
     }
 
+    private getCurrentMonthWorksheet(data: { [p: string]: any }): { [p: string]: any } {
+        const currentMonthWorksheet = data[`worksheet-${DatetimeUtils.getYYYYMMString(new Date(DatetimeUtils.getCurrentTimeInPst()))}`];
+        return (currentMonthWorksheet) ? currentMonthWorksheet : {};
+    }
 
+    get worksheet(): { [p: string]: any } {
+        return this._worksheet;
+    }
 }
